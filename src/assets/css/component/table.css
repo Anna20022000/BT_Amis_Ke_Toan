@@ -14,7 +14,7 @@ table.m-table tr {
 table.m-table tr > th {
   position: sticky;
   top: 0;
-  z-index: 1111;
+  z-index: 111;
   background-color: #eceef1;
 }
 

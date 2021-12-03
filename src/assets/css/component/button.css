@@ -19,3 +19,17 @@
     background-color: #01B075;
 }
 
+/* btn background white */
+.m-btn-outline{
+    min-width: 53px;
+    padding: 6px 16px;
+    border: 1px solid #8d9096;
+    color: #111;
+    background-color: transparent;
+}
+.m-btn-outline:hover{
+    background-color: #d2d3d6;
+}
+.m-btn-outline:active, .m-btn-outline:focus{
+    background-color: #b8bcc3;
+}

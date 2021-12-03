@@ -1,14 +1,15 @@
 .m-input{
     outline: none;
-    border: 1px solid #bbbbbb;
-    border-radius: 4px;
+    border: 1px solid #babec5;
+    border-radius: 2px;
     height: 30px;
-    padding: 0 16px;
+    padding: 0 12px;
     box-sizing: border-box;
+    width: 100%;
 }
 .m-input::placeholder{
     font-size: 11px;
-    color: #bbbbbb;
+    color: #babec5;
 }
 
 .m-input:focus{
@@ -27,7 +28,7 @@
 }
 
 .m-error-notify:focus {
-    border-color: #bbbbbb;
+    border-color: #babec5;
 }
 
 .m-error-info {
@@ -81,7 +82,7 @@ input.m-input-error{
 }
 .m-input-icon::placeholder{
     font-size: 11px;
-    color: #bbbbbb;
+    color: #babec5;
     font-style: italic;
 }
 .m-input-search .mi-search{

@@ -1,4 +1,4 @@
-.m-modal{
+body{
     position: relative;
 }
 .m-background-modal{
@@ -8,7 +8,53 @@
     right: 0;
     left: 0;
     background: rgba(0,0,0,.4);
-    z-index: 98;
+    z-index: 1111;
     transition: all .25s ease;
     opacity: 1;
+}
+.m-modal-main{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 550px;
+    background-color: #fff;
+    z-index: 11111;
+}
+.m-modal-header, .mo-header-left{
+    display: flex;
+    justify-content: space-between;
+
+}
+.mo-header-left{
+    padding: 20px 32px 20px 32px;
+    line-height: 33px;
+}
+.m-modal-title{
+    font-size: 24px;
+    font-weight: 600;
+}
+.mo-header-right{
+    display: flex;
+    justify-content: end;
+    padding: 12px;
+}
+
+.m-modal-content{
+    padding: 0 32px 20px 32px;
+}
+.m-content-bottom{
+    padding: 12px 0;
+}
+.m-fc-name{
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    padding-bottom: 4px;
+}
+.m-modal-footer{
+    padding: 12px 0 0;
+    border-top: 1px solid #babec5;
 }

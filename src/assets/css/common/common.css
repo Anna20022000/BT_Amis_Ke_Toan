@@ -1,10 +1,17 @@
-.m-row{
-    display: block;
-    width: 100%;
+.m-flex{
+    display: flex;
+    justify-content: space-between;
 }
-.m-row>label{
-    display: block;
-    margin-top: 10px;
+.m-flex-start{
+    display: flex;
+    justify-content: start;
+    padding-bottom: 12px;
+}
+.m-row{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding-bottom: 12px;
 }
 .m-text-center{
     text-align: center;
@@ -14,4 +21,43 @@
 }
 .m-text-left{
     text-align: left;
+}
+
+/* set padding */
+.pt-12{
+    padding-top: 12px!important;
+}
+.plr-6 {
+    padding-left: 1.5rem!important;
+    padding-right: 1.5rem!important;
+}
+.pr-6 {
+    padding-right: 6px;
+}
+.pr-26 {
+    padding-right: 26px;
+}
+.mr-10{
+    margin-right: 10px ;
+}
+
+/* set width */
+.w-25{
+    width: 25%!important;
+}
+.w-40 {
+    width: 40%!important;
+}
+.w-50 {
+    width: 50%!important;
+}
+.w-60 {
+    width: 60%!important;
+}
+.w-100{
+    width: 100%!important;
+}
+
+.m-color-red{
+    color: red;
 }
