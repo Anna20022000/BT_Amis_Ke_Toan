@@ -1,0 +1,23 @@
+.m-dropdown{
+    position: relative;
+}
+.m-dropdown div.m-dropdown-item{
+    display: none;
+    background-color: #fff !important;
+    white-space: nowrap;
+    transition: all .2s ease;
+    position: absolute;
+    top: 18px;
+    left: -80px;
+    z-index: 111;
+    text-align: left;
+    min-width: 100px;
+    font-weight: 400!important;
+    font-size: 13px;
+    padding: 5px;
+    border: 1px solid #b8bcc3;
+}
+/* .m-dropdown:focus > div.m-dropdown-item,
+.m-dropdown:active > div.m-dropdown-item{
+    display: block;
+} */

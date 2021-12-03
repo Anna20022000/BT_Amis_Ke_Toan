@@ -1,0 +1,65 @@
+.m-navbar{
+    width: 178px;
+    height: 100vh;
+    background-color: #38393d;
+    float: left;
+}
+.m-nav-top{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    padding: 24px;
+}
+.m-navbar a.m-toggle{
+    width: 24px;
+    height: 24px;
+    background: url('../../img/Sprites.64af8f61.svg') no-repeat -424px -86px;
+    margin-right: 10px;
+    display: inline-block;
+}
+.m-navbar a.m-logo img{
+    height: 32px;
+}
+/* ====== menu ======== */
+.m-navbar .m-menu{
+    height: calc(100vh - 48px);
+    overflow: auto;
+}
+.m-navbar .m-menu::-webkit-scrollbar-thumb {
+    background: #b8bcc3;
+}
+.m-navbar .m-menu::-webkit-scrollbar {
+    width: 5px;
+    background-color: #f1f1f1;
+}
+
+.m-navbar .m-menu ul{
+    padding-top: 14px;
+}
+.m-navbar .m-menu ul li{
+    line-height: 42px;
+    height: 42px;
+    border-left: 6px solid transparent;
+    padding-left: 8px;
+    padding-right: 14px;
+    position: relative;
+    cursor: pointer;
+}
+.m-navbar .m-menu ul li:hover::before{
+    content: "";
+    background: #ebedf0;
+    opacity: .2;
+    width: calc(100% + 6px);
+    height: 42px;
+    left: -6px;
+    top: 0;
+    position: absolute;
+}
+.m-navbar .m-menu ul li a{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+}
