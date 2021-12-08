@@ -43,18 +43,10 @@
     border-left: 6px solid transparent;
     padding-left: 8px;
     padding-right: 14px;
-    position: relative;
     cursor: pointer;
 }
-.m-navbar .m-menu ul li:hover::before{
-    content: "";
-    background: #ebedf0;
-    opacity: .2;
-    width: calc(100% + 6px);
-    height: 42px;
-    left: -6px;
-    top: 0;
-    position: absolute;
+.m-navbar .m-menu ul li:hover{
+    background-color: #323335;
 }
 .m-navbar .m-menu ul li a{
     display: flex;

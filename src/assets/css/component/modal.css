@@ -1,6 +1,9 @@
 body{
     position: relative;
 }
+.m-modal{
+    display: none;
+}
 .m-background-modal{
     position: fixed;
     top: 0;
@@ -57,4 +60,7 @@ body{
 .m-modal-footer{
     padding: 12px 0 0;
     border-top: 1px solid #babec5;
+}
+.m-modal-show{
+    display: block !important;
 }

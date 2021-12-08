@@ -2,23 +2,23 @@
     <nav class="m-navbar">
         <div class="m-nav-top">
             <a href="#" class="m-toggle"></a>
-            <a href="#" class="m-logo"><img src="../assets/img/Logo_Module_TiengViet_White.66947422.svg" alt=""></a>
+            <router-link to="/employee" class="m-logo"><img src="../assets/img/Logo_Module_TiengViet_White.66947422.svg" alt=""></router-link>
         </div>
         <div class="m-menu">
             <ul>
                 <li>
-                    <a href="#">
+                    <router-link to="/employee">
                         <div class="mi mi-24 mi-sidebar-dashboard">
                         </div>
                         <div class="m-name-submenu">Tổng quan</div>
-                    </a>
+                    </router-link>
                 </li>
                 <li>
-                    <a href="#">
+                    <router-link to="/customer">
                         <div class="mi mi-24 mi-sidebar-cash">
                         </div>
                         <div class="m-name-submenu">Tiền mặt</div>
-                    </a>
+                    </router-link>
                 </li>
                 <li>
                     <a href="#">
