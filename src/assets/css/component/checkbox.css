@@ -4,15 +4,18 @@ input.m-checkbox{
     height: 18px;
     border: 1px solid #afafaf;
     border-radius: 2px;
+    transform: rotate(-90deg);
 }
 
 input.m-checkbox:checked,
 input.m-checkbox:active,
 input.m-checkbox:checked:active{
+    transition: transform .15s linear;
     cursor: pointer;
     background: url(../../img/Sprites.64af8f61.svg) no-repeat;
     background-position: -1224px -361px;
     border: 1px solid #2CA01C;
+    transform: rotate(0deg);
 }
 .m-checkbox-label{
     display: flex;

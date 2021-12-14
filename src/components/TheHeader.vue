@@ -11,6 +11,7 @@
             <div class="m-header-right">
                 <div class="mi mi-24 mi-bell"></div>
                 <div class="m-account">
+                    <div class="mi mi-avatar m-avatar"></div>
                     <div class="m-account-name">Chu Thị Kim Yến</div>
                     <div class="mi mi-14 mi-chevron-down"></div>
                 </div>

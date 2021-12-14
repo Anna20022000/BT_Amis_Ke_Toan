@@ -9,45 +9,24 @@
     background-color: #fff;
     z-index: 11;
 }
-
+/* hiển thị số bản ghi */
 .m-paginate .m-paging-left{
-    /* width: 200px; */
     line-height: 56px;
 }
-.m-paginate .m-paging-center{
-    flex: 1;
+/* ============ Bộ lọc và phân trang ============== */
+.m-paging-right{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
 }
-.m-paginate .m-paging-first{
-    width: 24px;
-    height: 24px;
-    /* background-image: url('../../content/icon/btn-firstpage.svg'); */
-}
-.m-paginate .m-paging-prev{
-    width: 24px;
-    height: 24px;
-    /* background-image: url('../../content/icon/btn-prev-page.svg'); */
 
-}
-.m-paginate .m-paging-number{
+/* phân trang */
+.m-paging-number{
     line-height: 24px;
     text-align: center;
     height: 24px;
     display: flex;
     justify-content: center;
-}
-.m-paginate .m-paging-next{
-    width: 24px;
-    height: 24px;
-    /* background-image: url('../../content/icon/btn-next-page.svg'); */
-
-}
-.m-paginate .m-paging-last{
-    width: 24px;
-    height: 24px;
-    /* background-image: url('../../content/icon/btn-lastpage.svg'); */
-
 }
 .m-paginate .m-paging-center .m-paging-number div.m-page{
     min-width: 24px;
@@ -59,4 +38,66 @@
 }
 .m-paginate .m-paging-center .m-paging-number div.m-page:hover{
     background-color: #bbbbbb;
+}
+
+/*  */
+
+/* paging */
+
+.m-paging {
+    display: flex;
+    align-items: center;
+}
+
+.m-paging-txtLeft {
+    margin-right: 13px;
+    cursor: pointer;
+}
+
+.m-paging-txtRight {
+    margin-left: 13px;
+    cursor: pointer;
+    margin-right: 42px;
+}
+
+.m-paging .m-paging-number {
+    display: flex;
+    cursor: pointer;
+}
+
+.m-paging .m-page-index {
+    padding: 0 6.5px;
+}
+
+/* text Trước và Sau */
+
+.color-text {
+    opacity: .5;
+}
+
+.border-index {
+    border: 1px solid #c7c7c7;
+    font-family: notosans bold;
+}
+
+/* hiển thị data select */
+
+.show {
+    display: block !important;
+}
+
+
+/* focus vào data select */
+
+.focus-item {
+    color: #fff !important;
+    background-color: #2ca01c !important;
+}
+
+
+/* rotate icon */
+
+.rotate-icon {
+    transform: rotate(180deg);
+    transition: transform .15s linear;
 }

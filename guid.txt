@@ -1,0 +1,11 @@
+lifeCircle:
+- beforeCreate() -> data, event chua duoc thiet lap
+- created() -> lay dc du lieu nhung chua hien thi duoc len man hinh 
+- beforeMount() -> data va event duoc khoi tao va thiet lap truoc khi hien thi len DOM
+- mounted() -> data duoc gan vao DOM va hien thi UI, can thiep duoc vao DOM, chi duoc render 1 lan dau tien
+- beforeUpdate() -> Hook chay ngay sau khi du lieu dc gan vao DOM. Khi du lieu dc thay doi va truoc khi cac
+ component duoc hien thi lai
+- updated() -> sau khi cac component dc hien thi lai
+- watch() -> theo doi su thay doi du lieu
+
++ axios de goi api

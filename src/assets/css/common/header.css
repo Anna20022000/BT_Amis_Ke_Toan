@@ -35,6 +35,13 @@
 .m-account{
     margin: 0 16px;
 }
+.m-avatar{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 6px;
+    cursor: pointer;
+}
 .m-account .mi-chevron-down{
     margin-left: 10px;
 }

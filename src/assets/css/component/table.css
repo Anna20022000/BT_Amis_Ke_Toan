@@ -36,9 +36,13 @@ th {
   justify-content: center;
   align-items: center;
   border-bottom: unset;
+  box-sizing: border-box;
 }
 .m-table tr>td:last-child b{
   color: #0075c0;
   margin-right: 10px;
+}
+.m-table tr>td:last-child b:focus{
+  border: 1px solid #0075C0;
 }
 /* end column edit */

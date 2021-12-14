@@ -38,8 +38,6 @@
               <th>Điện thoại</th>
               <th>Email</th>
               <th>Chức vụ</th>
-              <th>Phòng ban</th>
-              <th class="m-text-right">Mức lương cơ bản</th>
               <th>Chức năng</th>
             </tr>
           </thead>
@@ -47,21 +45,20 @@
             <tr v-for="employee in employees" :key="employee.EmployeeId">
               <td><input type="checkbox" class="m-checkbox" /></td>
               <td>{{ employee.EmployeeCode }}</td>
-              <td>{{ employee.FullName }}</td>
+              <td>{{ employee.EmployeeName }}</td>
               <td>{{ employee.GenderName }}</td>
               <td class="m-text-center">
                 {{ employee.DateOfBirth | formatDate }}
               </td>
-              <td>{{ employee.PhoneNumber }}</td>
+              <td>{{ employee.TelephoneNumber }}</td>
               <td>{{ employee.Email }}</td>
-              <td>{{ employee.PositionName }}</td>
-              <td>{{ employee.DepartmentName }}</td>
-              <td class="m-text-right">{{ employee.Salary | formatNumber }}</td>
+              <td>{{ employee.EmployeePosition }}</td>
               <td>
-                <b class="m-btn-edit">Sửa</b>
+                <b class="m-btn-edit" @click="btnUpdateOnClick(employee)">Sửa</b>
                 <div class="mi mi-14 mi-arrow-up-blue m-dropdown">
-                  <div class="m-dropdown-item">Xóa</div>
+                  <div class="m-dropdown-item" @click="deleteEmployee()">Xóa</div>
                 </div>
+                <b class="m-btn-edit" @click="deleteEmployee(employee)">Xóa</b>
               </td>
             </tr>
           </tbody>
@@ -76,6 +73,19 @@
             <option value="">20 bản ghi/ trang</option>
             <option value="">30 bản ghi/ trang</option>
           </select>
+          <div class="m-paging plr-6">
+            <div class="m-paging-txtLeft">Trước</div>
+            <div class="m-paging-number">
+              <div class="m-page-index m-page-index-1 border-index" value="1">
+                1
+              </div>
+              <div class="m-page-index m-page-index-2" value="2">2</div>
+              <div class="m-page-index m-page-index-3" value="3">3</div>
+              <div class="m-page-index-dot-right">...</div>
+              <div class="m-page-index m-page-index-8" value="8">8</div>
+            </div>
+            <div class="m-paging-txtRight">Sau</div>
+          </div>
         </div>
       </div>
       <!-- end paginate -->
@@ -86,16 +96,19 @@
     <employee-modal
       :isShow="isShowModal"
       :employee="employee"
+      :employeeId="EmployeeId"
+      :mode="formMode"
       @showModal="showModal"
-      @getAllData = "getAllData"
+      @getAllData="getAllData"
     />
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import moment from "moment";
-import employeeModal from "./employeeModal.vue";
+import moment from "moment"; // library format datetime
+import employeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
+import EmployeeService from "../../services/employeeService"; // Service of this page
+
 
 export default {
   components: {
@@ -105,32 +118,61 @@ export default {
   data() {
     return {
       employees: [],
+      EmployeeId: "",
       employee: {
         EmployeeCode: "",
-        FullName: "",
-        GenderName: "",
-        DateOfBirth: "",
+        EmployeeName: "",
+        DateOfBirth: new Date(),
+        Gender: 1,
+        DepartmentId: "",
+        EmployeePosition:"",
+        Address: "",
+        TelephoneNumber: "",
         PhoneNumber: "",
         Email: "",
-        IdentityNumber:"",
-        PositionName: "",
-        DepartmentName: "",
-        Salary: 0,
+        IdentityNumber: "",
+        IdentityDate: new Date(),
+        IdentityPlace: "",
+        BankAccountNumber:"",
+        BankName:"",
+        BankBranchName:"",
       },
       isShowModal: false,
+      // formMode = 0 - ADD
+      // formMode = 1 - EDIT
+      formMode: 0,
     };
   },
   methods: {
+    formatDate (dateTime) {
+    var date = new Date(dateTime);
+    var day = ("0" + date.getDate()).slice(-2);
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+    return date.getFullYear()+"-"+(month)+"-"+(day) ;
+  },
     /**
      * When click button ADD NEW EMPLOYEE and SHOW MODAL ADD
      * Author: KimYen (6/12/2021)
      */
     btnAddOnclick() {
       this.getNewEmployeeCode();
+      this.formMode = 0;
       this.showModal(true);
     },
     /**
-     * Show modal or not
+     * When click button UPDATE and SHOW MODAL DETAIL
+     * Author: KimYen (9/12/2021)
+     */
+    btnUpdateOnClick(model){
+      this.EmployeeId = model.EmployeeId,
+      this.employee = model;
+      this.employee.DateOfBirth = this.formatDate(model.DateOfBirth);
+      this.employee.IdentityDate = this.formatDate(model.IdentityDate);
+      this.formMode = 1;
+      this.showModal(true);
+    },
+    /**
+     * Show modal employee detail
      * Author: KimYen (6/12/2021)
      */
     showModal(isShow) {
@@ -138,11 +180,10 @@ export default {
     },
     /**
      * Call api get all employee
-     * Author: KimYen (2/12/2021)
+     * Author: KimYen (8/12/2021)
      */
     getAllData() {
-      axios
-        .get(`http://cukcuk.manhnv.net/api/v1/Employees`)
+      EmployeeService.getAll()
         .then((response) => {
           this.employees = response.data;
         })
@@ -155,8 +196,7 @@ export default {
      * Author: KimYen (6/12/2021)
      */
     getNewEmployeeCode() {
-      axios
-        .get(`http://cukcuk.manhnv.net/api/v1/Employees/NewEmployeeCode`)
+      EmployeeService.getNewEmployeeCode()
         .then((response) => {
           this.employee.EmployeeCode = response.data;
         })
@@ -164,21 +204,41 @@ export default {
           alert(e);
         });
     },
+    /**
+     * Delete an Employee in database depend primary key
+     * Author: CTKimYen (9/12/2021)
+     */
+    deleteEmployee(model){
+      let _this = this;
+      if(confirm(`Bạn có chắc chắn muốn xóa nhân viên [${model.EmployeeCode}] không?`)){
+        EmployeeService.delete(model.EmployeeId)
+        .then(function(){
+          alert("Xóa thành công!");
+          _this.getAllData();
+        })
+        .catch(function(e){
+          alert(e);
+        })
+      }
+    }
   },
 
   created() {
     this.getAllData();
   },
+
   /**
    * Format data type DATETIME to DD/MM/YYYY
    * Format data type NUMBER to MONEY
    * Author: KimYen (6/12/2021)
    */
   filters: {
+    // Format data type DATETIME to DD/MM/YYYY
     formatDate: function (value) {
       if (!value) return "";
       return moment(String(value)).format("DD/MM/YYYY");
     },
+    // Format data type NUMBER to MONEY
     formatNumber: function (value) {
       if (!value) return "";
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
