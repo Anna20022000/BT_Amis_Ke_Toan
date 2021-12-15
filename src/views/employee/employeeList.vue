@@ -17,6 +17,7 @@
             type="text"
             class="m-input-icon"
             placeholder="Tìm theo mã, tên nhân viên"
+            v-model="inputSearch"
           />
           <div class="mi mi-16 mi-search"></div>
         </div>
@@ -35,13 +36,16 @@
               <th>Tên nhân viên</th>
               <th>Giới tính</th>
               <th class="m-text-center">Ngày sinh</th>
+              <th>Số CMND</th>
               <th>Điện thoại</th>
               <th>Email</th>
+              <th>Địa chỉ</th>
+              <th>Tên ngân hàng</th>
               <th>Chức vụ</th>
               <th>Chức năng</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="employees">
             <tr v-for="employee in employees" :key="employee.EmployeeId">
               <td><input type="checkbox" class="m-checkbox" /></td>
               <td>{{ employee.EmployeeCode }}</td>
@@ -50,16 +54,26 @@
               <td class="m-text-center">
                 {{ employee.DateOfBirth | formatDate }}
               </td>
+              <td>{{ employee.IdentityNumber }}</td>
               <td>{{ employee.TelephoneNumber }}</td>
               <td>{{ employee.Email }}</td>
+              <td>{{ employee.Address }}</td>
+              <td>{{ employee.BankName }}</td>
               <td>{{ employee.EmployeePosition }}</td>
               <td>
-                <b class="m-btn-edit" @click="btnUpdateOnClick(employee)">Sửa</b>
+                <b class="m-btn-edit" @click="btnUpdateOnClick(employee)"
+                  >Sửa</b
+                >
 
-                <div class="mi mi-14 mi-arrow-up-blue m-dropdown"
-                :class="{'m-dropdown-active': showBtnDel}"
-                @click="showBtnDel = !showBtnDel" >
-                  <div class="m-dropdown-item" @click="btnDeleteOnClick(employee)">
+                <div
+                  class="mi mi-14 mi-arrow-up-blue m-dropdown"
+                  :class="{ 'm-dropdown-active': showBtnDel && EmployeeId === employee.EmployeeId}"
+                  @click="btnShowDelOnclick(employee.EmployeeId)"
+                >
+                  <div
+                    class="m-dropdown-item"
+                    @click="btnDeleteOnClick(employee)"
+                  >
                     Xóa
                   </div>
                 </div>
@@ -68,28 +82,34 @@
             </tr>
           </tbody>
         </table>
+        
+          <div v-if="!employees" style="padding: 2em 0">
+            <div style="display: flex; justify-content: center">
+              <img style="width: 132px" src="https://actappg2.misacdn.net/img/bg_report_nodata.76e50bd8.svg" alt="">
+            </div>
+            <p style="margin-top: 1em; text-align: center">Không có dữ liệu</p>
+          </div>
       </div>
       <!-- paginate -->
-      <div class="m-paginate">
-        <div class="m-paging-left">Tổng số: <b>1054</b> bản ghi</div>
+      <div class="m-paginate" v-if="employees">
+        <div class="m-paging-left">Tổng số: <b>{{ TotalRecord }}</b> bản ghi</div>
         <div class="m-paging-right">
-          <select name="" id="" class="m-dropdown">
-            <option value="">10 bản ghi/ trang</option>
-            <option value="">20 bản ghi/ trang</option>
-            <option value="">30 bản ghi/ trang</option>
+          <select name="" id="" class="m-dropdown" v-model="pageSize">
+            <option value="10">10 bản ghi/ trang</option>
+            <option value="30">30 bản ghi/ trang</option>
+            <option value="50">50 bản ghi/ trang</option>
           </select>
           <div class="m-paging plr-6">
-            <div class="m-paging-txtLeft">Trước</div>
-            <div class="m-paging-number">
-              <div class="m-page-index m-page-index-1 border-index" value="1">
-                1
-              </div>
-              <div class="m-page-index m-page-index-2" value="2">2</div>
-              <div class="m-page-index m-page-index-3" value="3">3</div>
-              <div class="m-page-index-dot-right">...</div>
-              <div class="m-page-index m-page-index-8" value="8">8</div>
-            </div>
-            <div class="m-paging-txtRight">Sau</div>
+            <sliding-pagination
+              :current="currentPage"
+              :total="totalPages"
+              :ariaPreviousPageLabel="'Trước'"
+              :ariaNextPageLabel="'Sau'"
+              :slidingEndingSize="1"
+              :slidingWindowSize="3"
+              :nonSlidingSize="3"
+              @page-change="pageChangeHandler"
+            ></sliding-pagination>
           </div>
         </div>
       </div>
@@ -106,16 +126,15 @@
       @showModal="showModal"
       @getAllData="getAllData"
     />
-    
+
     <!-- POP UP DELETE -->
     <popup
-    :showPopup="isShowPopupDel"
-    :employeeCode="employee.EmployeeCode"
-    @deleteEmployee="deleteEmployee"
-    @showPopupDel="showPopupDel"
+      :showPopup="isShowPopupDel"
+      :employeeCode="employee.EmployeeCode"
+      @deleteEmployee="deleteEmployee"
+      @showPopupDel="showPopupDel"
     />
     <!-- END POPUP DELETE -->
-
   </div>
 </template>
 
@@ -123,15 +142,14 @@
 import moment from "moment"; // library format datetime
 import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
-import Popup from '../share/popup.vue';
-// import Alert from '../share/alert.vue'
-
+import Popup from "../share/popup.vue";
+import SlidingPagination from "vue-sliding-pagination";
 
 export default {
   components: {
     EmployeeModal,
     Popup,
-    // Alert,
+    SlidingPagination,
   },
 
   data() {
@@ -139,8 +157,12 @@ export default {
       // formMode = 0 - ADD
       // formMode = 1 - EDIT
       formMode: 0,
+      // danh sách nhân viên
       employees: [],
+      // id nhân viên
       EmployeeId: "",
+      employeeCode: "",
+      // 1 đối tượng nhân viên
       employee: {
         EmployeeCode: "",
         EmployeeName: "",
@@ -165,9 +187,27 @@ export default {
       showBtnDel: false,
       // show popup confirm delete
       isShowPopupDel: false,
+      // trang hiện tại
+      currentPage: 1,
+      // tổng số trang
+      totalPages: 0,
+      // số bản ghi trên trang
+      pageSize: 10,
+      // tổng số bản ghi
+      TotalRecord: 0,
+      // input tìm kiếm theo mã hoặc tên
+      inputSearch: "",
     };
   },
   methods: {
+    btnShowDelOnclick(id){
+      this.EmployeeId = id;
+      this.showBtnDel = !this.showBtnDel;
+    },
+    pageChangeHandler(selectedPage) {
+    this.currentPage = selectedPage;
+    this.getAllData();
+  },
     /**
      * Format input type date
      * Author: CTKimYen (10/12/2021)
@@ -183,7 +223,7 @@ export default {
      * Author:CTKimYen (6/12/2021)
      */
     btnAddOnclick() {
-      this.employee = {
+      (this.employee = {
         EmployeeCode: "",
         EmployeeName: "",
         DateOfBirth: "",
@@ -200,8 +240,8 @@ export default {
         BankAccountNumber: "",
         BankName: "",
         BankBranchName: "",
-      },
-      this.getNewEmployeeCode();
+      }),
+        this.getNewEmployeeCode();
       this.formMode = 0;
       this.showModal(true);
     },
@@ -228,9 +268,11 @@ export default {
      * Author:CTKimYen (8/12/2021)
      */
     getAllData() {
-      EmployeeService.getAll()
+      EmployeeService.filter(this.pageSize, this.currentPage, this.inputSearch)
         .then((response) => {
-          this.employees = response.data;
+          this.employees = response.data.Data;
+          this.totalPages = response.data.TotalPage;
+          this.TotalRecord = response.data.TotalRecord;
         })
         .catch((e) => {
           alert(e);
@@ -249,7 +291,7 @@ export default {
           alert(e);
         });
     },
-     /**
+    /**
      * Show popup confirm delete an employee
      * Author: CTKimYen (14/12/2021)
      */
@@ -260,7 +302,7 @@ export default {
      * show popup confirm delete
      * Author: CTKimYen (14/12/2021)
      */
-    btnDeleteOnClick(model){
+    btnDeleteOnClick(model) {
       this.employee = model;
       // show popup confirm
       this.showPopupDel(true);
@@ -273,14 +315,14 @@ export default {
       let _this = this;
       // call api to delete an employee
       EmployeeService.delete(this.employee.EmployeeId)
-          .then(function () {
-            // Hide popup confirm
-            _this.showPopupDel(false);
-            _this.getAllData();
-          })
-          .catch(function (e) {
-            alert(e);
-          });
+        .then(function () {
+          // Hide popup confirm
+          _this.showPopupDel(false);
+          _this.getAllData();
+        })
+        .catch(function (e) {
+          alert(e);
+        });
     },
   },
 
@@ -305,5 +347,14 @@ export default {
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
   },
+  
+  watch:{
+    pageSize: function(){
+      this.getAllData();
+    },
+    inputSearch: function(){
+      this.getAllData();
+    }
+  }
 };
 </script>

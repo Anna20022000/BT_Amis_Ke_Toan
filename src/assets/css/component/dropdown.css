@@ -1,5 +1,6 @@
 .m-dropdown{
     position: relative;
+    padding: 4px 10px;
 }
 .m-dropdown div.m-dropdown-item{
     display: none;
@@ -17,8 +18,14 @@
     padding: 5px;
     border: 1px solid #b8bcc3;
 }
+.m-dropdown-active{
+    border: 1px solid #0075c0;
+}
 .m-dropdown-active > div.m-dropdown-item{
     display: block;
+}
+div.m-dropdown-item:hover{
+    color: #08bf1e;
 }
 .m-dropdown-menu{
     background: #fff;

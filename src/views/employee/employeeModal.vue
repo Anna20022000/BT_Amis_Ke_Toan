@@ -326,7 +326,6 @@ export default {
       let _this = this;
       EmployeeService.create(this.employee)
         .then(function () {
-          alert("Thêm nhân viên thành công!");
           _this.$emit("showModal", false);
           _this.$emit("getAllData");
         })
@@ -335,7 +334,8 @@ export default {
             case 400: {
               let data = res.response.data;
               if (data) {
-                alert(data.userMsg);
+                _this.messageAlert = data.userMsg;
+                _this.showAlertError(true);
               }
               break;
             }
@@ -353,7 +353,6 @@ export default {
       let _this = this;
       EmployeeService.update(id, model)
         .then(function () {
-          alert("Cập nhật nhân viên thành công!");
           _this.$emit("showModal", false);
           _this.$emit("getAllData");
         })
@@ -362,7 +361,8 @@ export default {
             case 400: {
               let data = res.response.data;
               if (data) {
-                alert(data.userMsg);
+                _this.messageAlert = data.userMsg;
+                _this.showAlertError(true);
               }
               break;
             }

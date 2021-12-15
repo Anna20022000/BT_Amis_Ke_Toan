@@ -50,14 +50,12 @@ class EmployeeService {
    * @param {number} pageSize Số bản ghi/ trang
    * @param {number} pageNumber Trang số bao nhiêu
    * @param {string} employeeFilter Điều kiện để lọc dữ liệu (mã, tên hoặc sđt)
-   * @param {string} departmentId Id phòng ban - null nếu không có
-   * @param {string} positionId Id vị trí - null nếu không có
    * @returns Danh sách nhân viên thỏa mãn điều kiện lọc
    * Author: CTKYen (8/12/2021)s
    */
-  filter(pageSize, pageNumber, employeeFilter, departmentId, positionId){
-      return http.get(`/api/v1/Employees/filter?pageSize=${pageSize}&pageNumber=${pageNumber}
-      &employeeFilter=${employeeFilter}&departmentId=${departmentId}&positionId=${positionId}`)
+  filter(pageSize, pageNumber, employeeFilter){
+    return http.get(`/api/v1/Employees/filter?pageSize=${pageSize}&pageNumber=${pageNumber}
+    &employeeFilter=${employeeFilter}`)
   }
 }
 
