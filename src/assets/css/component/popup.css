@@ -3,7 +3,7 @@
 .m-popup {
     position: absolute;
     background-color: #ffffff;
-    z-index: 2000;
+    z-index: 999999;
     width: 444px;
     top: 50%;
     left: 50%;
@@ -30,4 +30,7 @@
 
 .m-popup-bottom{
     display: flex;
+}
+.m-modal-backUp{
+    z-index: 11111;
 }

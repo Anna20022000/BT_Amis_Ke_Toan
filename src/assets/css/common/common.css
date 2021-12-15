@@ -2,6 +2,11 @@
     display: flex;
     justify-content: space-between;
 }
+.m-flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .m-flex-start{
     display: flex;
     justify-content: start;

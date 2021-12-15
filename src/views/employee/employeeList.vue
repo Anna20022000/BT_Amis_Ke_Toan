@@ -114,6 +114,7 @@
     @deleteEmployee="deleteEmployee"
     @showPopupDel="showPopupDel"
     />
+    <!-- END POPUP DELETE -->
 
   </div>
 </template>
@@ -123,15 +124,21 @@ import moment from "moment"; // library format datetime
 import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
 import Popup from '../share/popup.vue';
+// import Alert from '../share/alert.vue'
+
 
 export default {
   components: {
     EmployeeModal,
-    Popup
+    Popup,
+    // Alert,
   },
 
   data() {
     return {
+      // formMode = 0 - ADD
+      // formMode = 1 - EDIT
+      formMode: 0,
       employees: [],
       EmployeeId: "",
       employee: {
@@ -152,12 +159,12 @@ export default {
         BankName: "",
         BankBranchName: "",
       },
+      // show modal employee detail
       isShowModal: false,
+      // show btn delete
       showBtnDel: false,
+      // show popup confirm delete
       isShowPopupDel: false,
-      // formMode = 0 - ADD
-      // formMode = 1 - EDIT
-      formMode: 0,
     };
   },
   methods: {
@@ -237,7 +244,6 @@ export default {
       EmployeeService.getNewEmployeeCode()
         .then((response) => {
           this.employee.EmployeeCode = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           alert(e);

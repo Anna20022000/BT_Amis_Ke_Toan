@@ -11,7 +11,7 @@ body{
     right: 0;
     left: 0;
     background: rgba(0,0,0,.4);
-    z-index: 1111;
+    z-index: 1110;
     transition: all .25s ease;
     opacity: 1;
 }
@@ -23,7 +23,7 @@ body{
     width: 900px;
     height: 550px;
     background-color: #fff;
-    z-index: 11111;
+    z-index: 1111;
 }
 .m-modal-header, .mo-header-left{
     display: flex;
@@ -62,5 +62,5 @@ body{
     border-top: 1px solid #babec5;
 }
 .m-modal-show{
-    display: block !important;
+    display: block;
 }
