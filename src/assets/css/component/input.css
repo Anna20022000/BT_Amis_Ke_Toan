@@ -17,49 +17,8 @@
 }
 
 /* INPUT ERROR */
-
-.m-input-error{
-    position: relative;
-    width: 200px;
-}
-
-.m-error-notify {
-    border: 1px solid #ff4747;
-}
-
-.m-error-notify:focus {
-    border-color: #babec5;
-}
-
-.m-error-info {
-    display: none;
-    min-width: 80%;
-    position: absolute;
-    top: -41%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #ff4747;
-    border-radius: 10px;
-    color: #ffffff;
-    padding: 8px;
-    text-align: center;
-}
-span.m-error-title{
-    color: #fff !important;
-}
-.m-arrow-bottom {
-    position: absolute;
-    top: calc(100% - 10px);
-    left: calc(50% - 10px);
-    width: 15px;
-    height: 15px;
-    transform: rotate(45deg);
-    background-color: #ff4747;
-}
-
-/* input error */
-input.m-input-error{
-    border: 1px solid #ff4747;
+.m-is-invalid{
+    border-color: #ff4747 !important;
 }
 
 

@@ -10,7 +10,7 @@
     outline: unset;
     border: none;
     cursor: pointer;
-    min-width: 100px;
+    /* min-width: 100px; */
 }
 .m-btn:hover{
     background-color: #35bf22;

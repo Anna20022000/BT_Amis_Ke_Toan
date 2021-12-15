@@ -8,10 +8,7 @@
 @import url('./component/icon.css');
 @import url('./component/dropdown.css');
 @import url('./component/modal.css');
-
-@import url('./common/header.css');
-@import url('./common/navbar.css');
-@import url('./common/content.css');
+@import url('./component/popup.css');
 
 *{
     margin: 0;

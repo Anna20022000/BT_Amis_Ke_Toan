@@ -55,10 +55,15 @@
               <td>{{ employee.EmployeePosition }}</td>
               <td>
                 <b class="m-btn-edit" @click="btnUpdateOnClick(employee)">Sửa</b>
-                <div class="mi mi-14 mi-arrow-up-blue m-dropdown">
-                  <div class="m-dropdown-item" @click="deleteEmployee()">Xóa</div>
+
+                <div class="mi mi-14 mi-arrow-up-blue m-dropdown"
+                :class="{'m-dropdown-active': showBtnDel}"
+                @click="showBtnDel = !showBtnDel" >
+                  <div class="m-dropdown-item" @click="btnDeleteOnClick(employee)">
+                    Xóa
+                  </div>
                 </div>
-                <b class="m-btn-edit" @click="deleteEmployee(employee)">Xóa</b>
+                <!-- <b class="m-btn-edit" @click="btnDeleteOnClick(employee)">Xóa</b> -->
               </td>
             </tr>
           </tbody>
@@ -101,18 +106,28 @@
       @showModal="showModal"
       @getAllData="getAllData"
     />
+    
+    <!-- POP UP DELETE -->
+    <popup
+    :showPopup="isShowPopupDel"
+    :employeeCode="employee.EmployeeCode"
+    @deleteEmployee="deleteEmployee"
+    @showPopupDel="showPopupDel"
+    />
+
   </div>
 </template>
 
 <script>
 import moment from "moment"; // library format datetime
-import employeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
+import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
-
+import Popup from '../share/popup.vue';
 
 export default {
   components: {
-    employeeModal,
+    EmployeeModal,
+    Popup
   },
 
   data() {
@@ -125,7 +140,7 @@ export default {
         DateOfBirth: new Date(),
         Gender: 1,
         DepartmentId: "",
-        EmployeePosition:"",
+        EmployeePosition: "",
         Address: "",
         TelephoneNumber: "",
         PhoneNumber: "",
@@ -133,39 +148,62 @@ export default {
         IdentityNumber: "",
         IdentityDate: new Date(),
         IdentityPlace: "",
-        BankAccountNumber:"",
-        BankName:"",
-        BankBranchName:"",
+        BankAccountNumber: "",
+        BankName: "",
+        BankBranchName: "",
       },
       isShowModal: false,
+      showBtnDel: false,
+      isShowPopupDel: false,
       // formMode = 0 - ADD
       // formMode = 1 - EDIT
       formMode: 0,
     };
   },
   methods: {
-    formatDate (dateTime) {
-    var date = new Date(dateTime);
-    var day = ("0" + date.getDate()).slice(-2);
-    var month = ("0" + (date.getMonth() + 1)).slice(-2);
-    return date.getFullYear()+"-"+(month)+"-"+(day) ;
-  },
+    /**
+     * Format input type date
+     * Author: CTKimYen (10/12/2021)
+     */
+    formatDate(dateTime) {
+      var date = new Date(dateTime);
+      var day = ("0" + date.getDate()).slice(-2);
+      var month = ("0" + (date.getMonth() + 1)).slice(-2);
+      return date.getFullYear() + "-" + month + "-" + day;
+    },
     /**
      * When click button ADD NEW EMPLOYEE and SHOW MODAL ADD
-     * Author: KimYen (6/12/2021)
+     * Author:CTKimYen (6/12/2021)
      */
     btnAddOnclick() {
+      this.employee = {
+        EmployeeCode: "",
+        EmployeeName: "",
+        DateOfBirth: "",
+        Gender: 1,
+        DepartmentId: "",
+        EmployeePosition: "",
+        Address: "",
+        TelephoneNumber: "",
+        PhoneNumber: "",
+        Email: "",
+        IdentityNumber: "",
+        IdentityDate: "",
+        IdentityPlace: "",
+        BankAccountNumber: "",
+        BankName: "",
+        BankBranchName: "",
+      },
       this.getNewEmployeeCode();
       this.formMode = 0;
       this.showModal(true);
     },
     /**
      * When click button UPDATE and SHOW MODAL DETAIL
-     * Author: KimYen (9/12/2021)
+     * Author:CTKimYen (9/12/2021)
      */
-    btnUpdateOnClick(model){
-      this.EmployeeId = model.EmployeeId,
-      this.employee = model;
+    btnUpdateOnClick(model) {
+      (this.EmployeeId = model.EmployeeId), (this.employee = model);
       this.employee.DateOfBirth = this.formatDate(model.DateOfBirth);
       this.employee.IdentityDate = this.formatDate(model.IdentityDate);
       this.formMode = 1;
@@ -173,14 +211,14 @@ export default {
     },
     /**
      * Show modal employee detail
-     * Author: KimYen (6/12/2021)
+     * Author:CTKimYen (6/12/2021)
      */
     showModal(isShow) {
       this.isShowModal = isShow;
     },
     /**
      * Call api get all employee
-     * Author: KimYen (8/12/2021)
+     * Author:CTKimYen (8/12/2021)
      */
     getAllData() {
       EmployeeService.getAll()
@@ -193,34 +231,51 @@ export default {
     },
     /**
      * Call api get new employee code
-     * Author: KimYen (6/12/2021)
+     * Author: CTKimYen (6/12/2021)
      */
     getNewEmployeeCode() {
       EmployeeService.getNewEmployeeCode()
         .then((response) => {
           this.employee.EmployeeCode = response.data;
+          console.log(response.data);
         })
         .catch((e) => {
           alert(e);
         });
     },
+     /**
+     * Show popup confirm delete an employee
+     * Author: CTKimYen (14/12/2021)
+     */
+    showPopupDel(isShow) {
+      this.isShowPopupDel = isShow;
+    },
+    /**
+     * show popup confirm delete
+     * Author: CTKimYen (14/12/2021)
+     */
+    btnDeleteOnClick(model){
+      this.employee = model;
+      // show popup confirm
+      this.showPopupDel(true);
+    },
     /**
      * Delete an Employee in database depend primary key
      * Author: CTKimYen (9/12/2021)
      */
-    deleteEmployee(model){
+    deleteEmployee() {
       let _this = this;
-      if(confirm(`Bạn có chắc chắn muốn xóa nhân viên [${model.EmployeeCode}] không?`)){
-        EmployeeService.delete(model.EmployeeId)
-        .then(function(){
-          alert("Xóa thành công!");
-          _this.getAllData();
-        })
-        .catch(function(e){
-          alert(e);
-        })
-      }
-    }
+      // call api to delete an employee
+      EmployeeService.delete(this.employee.EmployeeId)
+          .then(function () {
+            // Hide popup confirm
+            _this.showPopupDel(false);
+            _this.getAllData();
+          })
+          .catch(function (e) {
+            alert(e);
+          });
+    },
   },
 
   created() {
@@ -230,7 +285,7 @@ export default {
   /**
    * Format data type DATETIME to DD/MM/YYYY
    * Format data type NUMBER to MONEY
-   * Author: KimYen (6/12/2021)
+   * Author: CTKimYen (6/12/2021)
    */
   filters: {
     // Format data type DATETIME to DD/MM/YYYY

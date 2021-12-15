@@ -17,7 +17,13 @@
     padding: 5px;
     border: 1px solid #b8bcc3;
 }
-/* .m-dropdown:focus > div.m-dropdown-item,
-.m-dropdown:active > div.m-dropdown-item{
+.m-dropdown-active > div.m-dropdown-item{
     display: block;
-} */
+}
+.m-dropdown-menu{
+    background: #fff;
+    padding: 2px 1px;
+    border-radius: 2px;
+    border: 1px solid #babec5;
+    position: relative;
+}

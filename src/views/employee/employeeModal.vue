@@ -23,142 +23,213 @@
       <!-- end header modal -->
       <!-- content modal -->
       <article class="m-modal-content">
-        <div class="m-row">
-          <div class="w-50 pr-26 m-flex">
-            <div class="w-40 pr-6">
-              <label class="m-fc-name"
-                >Mã <span class="m-color-red">*</span></label >
-              <input
-                type="text"
-                class="m-input"
-                v-model="employee.EmployeeCode"
-              />
+        <!-- <form @submit.prevent="handleSubmit"> -->
+          <div class="m-row">
+            <div class="w-50 pr-26 m-flex">
+              <div class="w-40 pr-6 form-group">
+                <label class="m-fc-name"
+                  >Mã <span class="m-color-red">*</span></label
+                >
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.EmployeeCode"
+                  :class="{
+                    'm-is-invalid':
+                      submitted && $v.employee.EmployeeCode.$error,
+                  }"
+                />
+              </div>
+              <div class="w-60 form-group">
+                <label class="m-fc-name"
+                  >Tên <span class="m-color-red">*</span></label
+                >
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.EmployeeName"
+                  :class="{
+                    'm-is-invalid':
+                      submitted && $v.employee.EmployeeName.$error,
+                  }"
+                />
+              </div>
             </div>
-            <div class="w-60">
-              <label class="m-fc-name"
-                >Tên <span class="m-color-red">*</span></label >
-              <input type="text" class="m-input" v-model="employee.EmployeeName" />
-            </div>
-          </div>
-          <div class="w-50 m-flex">
-            <div class="w-40 pr-6">
-              <label class="m-fc-name">Ngày sinh</label>
-              <input
-                type="date"
-                class="m-input"
-                v-model="employee.DateOfBirth"
-              />
-            </div>
-            <div class="w-60">
-              <label class="m-fc-name">Giới tính</label>
-              <div class="m-radio-region">
-                <div class="plr-6 m-radio-label">
-                  <input type="radio" class="m-radio" name="gender" value="1" v-model="employee.Gender"/>
-                  <label for="gender">Nam</label>
-                </div>
-                <div class="plr-6 m-radio-label">
-                  <input type="radio" class="m-radio" name="gender" value="0" v-model="employee.Gender"/>
-                  <label for="gender">Nữ</label>
+            <div class="w-50 m-flex">
+              <div class="w-40 pr-6">
+                <label class="m-fc-name">Ngày sinh</label>
+                <input
+                  type="date"
+                  class="m-input form-control"
+                  v-model="employee.DateOfBirth"
+                />
+              </div>
+              <div class="w-60">
+                <label class="m-fc-name">Giới tính</label>
+                <div class="m-radio-region">
+                  <div class="plr-6 m-radio-label">
+                    <input
+                      type="radio"
+                      class="m-radio"
+                      name="gender"
+                      value="1"
+                      v-model="employee.Gender"
+                    />
+                    <label for="gender">Nam</label>
+                  </div>
+                  <div class="plr-6 m-radio-label">
+                    <input
+                      type="radio"
+                      class="m-radio"
+                      name="gender"
+                      value="0"
+                      v-model="employee.Gender"
+                    />
+                    <label for="gender">Nữ</label>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="m-row">
-          <div class="pr-26 w-50">
-            <label name="department" class="m-fc-name">Đơn vị</label>
-            <v-select v-model="employee.DepartmentId" :options="options" :reduce="DepartmentName => DepartmentName.DepartmentId" label="DepartmentName"></v-select>
-          </div>
-          <div class="w-50 m-flex">
-            <div class="w-60 pr-6">
-              <label class="m-fc-name"
-                >Số CMND</label>
-              <input
-                type="text"
-                class="m-input"
-                v-model="employee.IdentityNumber"
-              />
-            </div>
-            <div class="w-40">
-              <label class="m-fc-name">Ngày cấp</label>
-              <input type="date" class="m-input" v-model="employee.IdentityDate" />
-            </div>
-          </div>
-        </div>
-
-        <div class="m-row">
-          <div class="pr-26 w-50">
-            <label class="m-fc-name">Chức danh</label>
-            <input
-              type="text"
-              class="m-input"
-              v-model="employee.EmployeePosition"
-            />
-          </div>
-          <div class="w-50">
-            <label class="m-fc-name">Nơi cấp</label>
-            <input type="text" class="m-input" v-model="employee.IdentityPlace" />
-          </div>
-        </div>
-
-        <section class="m-content-bottom">
           <div class="m-row">
-            <div class="w-100">
-              <label class="m-fc-name">Địa chỉ</label>
-              <input type="text" class="m-input" v-model="employee.Address" />
+            <div class="pr-26 w-50 form-group">
+              <label name="department" class="m-fc-name">Đơn vị</label>
+              <v-select
+                class="form-control"
+                v-model="employee.DepartmentId"
+                :options="departments"
+                :reduce="(DepartmentName) => DepartmentName.DepartmentId"
+                label="DepartmentName"
+                :class="{
+                  'm-is-invalid': submitted && $v.employee.DepartmentId.$error,
+                }"
+              ></v-select>
+            </div>
+            <div class="w-50 m-flex">
+              <div class="w-60 pr-6">
+                <label class="m-fc-name">Số CMND</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.IdentityNumber"
+                />
+              </div>
+              <div class="w-40">
+                <label class="m-fc-name">Ngày cấp</label>
+                <input
+                  type="date"
+                  class="m-input form-control"
+                  v-model="employee.IdentityDate"
+                />
+              </div>
             </div>
           </div>
 
-          <div class="m-flex-start">
-            <div class="w-25 pr-6">
-              <label class="m-fc-name"
-                >ĐT di động</label >
+          <div class="m-row">
+            <div class="pr-26 w-50">
+              <label class="m-fc-name">Chức danh</label>
               <input
                 type="text"
-                class="m-input"
-                v-model="employee.TelephoneNumber"
+                class="m-input form-control"
+                v-model="employee.EmployeePosition"
               />
             </div>
-            <div class="w-25 pr-6">
-              <label class="m-fc-name">ĐT cố định</label>
-              <input type="text" class="m-input" v-model="employee.PhoneNumber"/>
-            </div>
-            <div class="w-25 pr-6">
-              <label class="m-fc-name"
-                >Email</label >
-              <input type="email" class="m-input" v-model="employee.Email" />
+            <div class="w-50">
+              <label class="m-fc-name">Nơi cấp</label>
+              <input
+                type="text"
+                class="m-input form-control"
+                v-model="employee.IdentityPlace"
+              />
             </div>
           </div>
 
-          <div class="m-flex-start">
-            <div class="w-25 pr-6">
-              <label class="m-fc-name">Tài khoản ngân hàng</label>
-              <input type="text" class="m-input" v-model="employee.BankAccountNumber" />
+          <section class="m-content-bottom">
+            <div class="m-row">
+              <div class="w-100">
+                <label class="m-fc-name">Địa chỉ</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.Address"
+                />
+              </div>
             </div>
-            <div class="w-25 pr-6">
-              <label class="m-fc-name">Tên ngân hàng</label>
-              <input type="text" class="m-input" v-model="employee.BankName" />
+
+            <div class="m-flex-start">
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">ĐT di động</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.TelephoneNumber"
+                />
+              </div>
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">ĐT cố định</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.PhoneNumber"
+                />
+              </div>
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">Email</label>
+                <input
+                  type="email"
+                  class="m-input form-control"
+                  v-model="employee.Email"
+                />
+              </div>
             </div>
-            <div class="w-25 pr-6">
-              <label class="m-fc-name">Chi nhánh</label>
-              <input type="text" class="m-input" v-model="employee.BankBranchName" />
+
+            <div class="m-flex-start">
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">Tài khoản ngân hàng</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.BankAccountNumber"
+                />
+              </div>
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">Tên ngân hàng</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.BankName"
+                />
+              </div>
+              <div class="w-25 pr-6">
+                <label class="m-fc-name">Chi nhánh</label>
+                <input
+                  type="text"
+                  class="m-input form-control"
+                  v-model="employee.BankBranchName"
+                />
+              </div>
             </div>
-          </div>
-        </section>
-        <!-- modal footer -->
-        <section class="m-modal-footer m-flex">
-          <div class="m-footer-left">
-            <button class="m-btn m-btn-outline" @click="btnCloseOnclick()">Hủy</button>
-          </div>
-          <div class="m-footer-right m-flex">
-            <button class="m-btn m-btn-outline mr-10" @click="btnSaveOnclick()">
-              Cất
-            </button>
-            <button class="m-btn">Cất và thêm</button>
-          </div>
-        </section>
-        <!-- end modal footer -->
+          </section>
+          <!-- modal footer -->
+          <section class="m-modal-footer m-flex">
+            <div class="m-footer-left">
+              <button class="m-btn m-btn-outline" @click="btnCloseOnclick()">
+                Hủy
+              </button>
+            </div>
+            <div class="m-footer-right m-flex">
+              <button type="submit"
+                class="m-btn m-btn-outline mr-10"
+                @click="btnSaveOnclick()"
+              >
+                Cất
+              </button>
+              <button type="submit" class="m-btn">Cất và thêm</button>
+            </div>
+          </section>
+          <!-- end modal footer -->
+        <!-- </form> -->
       </article>
       <!-- end content modal -->
     </div>
@@ -168,71 +239,57 @@
 </template>
 
 <script>
-import EmployeeService from '../../services/employeeService'
-import DepartmentService from '../../services/departmentService'
+import EmployeeService from "../../services/employeeService";
+import DepartmentService from "../../services/departmentService";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   props: ["isShow", "mode", "employee", "employeeId"],
   data() {
     return {
-      options :[],
+      departments: [],
+      submitted: false,
+      showPopup: true
     };
+  },
+  validations: {
+    employee: {
+      EmployeeCode: { required },
+      EmployeeName: { required },
+      DepartmentId: { required },
+    },
   },
   methods: {
     /**
-     * Format input type date
-     * Author: CTKimYen (10/12/2021)
-     */
-    formatDate (dateTime) {
-    var date = new Date(dateTime);
-    var day = ("0" + date.getDate()).slice(-2);
-    var month = ("0" + (date.getMonth() + 1)).slice(-2);
-    return date.getFullYear()+"-"+(month)+"-"+(day) ;
-  },
-    /**
-     * close modal
-     * Author: KimYen (6/12/2021)
-     */
-    btnCloseOnclick() {
-      this.$emit("showModal", false);
-      
-    },
-    /**
      * When click btn SAVE, save a new employee into database
-     * Author: KimYen (6/12/2021)
+     * Author: KimYen (10/12/2021)
      */
     btnSaveOnclick() {
-      // Call api to save data employee
+      this.submitted = true;
+
+      // stop here if form is invalid
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
+      }
       // Check Mode is ADD or UPDATE
       // Nếu mode = 0 => add
-      if(this.mode == 0){
+      if (this.mode == 0) {
         // add
         this.createEmployee();
-      }
-      else{
+        this.submitted = false;
+        
+      } else {
         // update
         this.updateEmployee(this.employeeId, this.employee);
+        this.submitted = false;
       }
-      
-    },
-    /**
-     * Get all department in databse
-     * Author: CTKimYen (9/12/2021)
-     */
-    getAllDepartments(){
-      DepartmentService.getAll()
-      .then((response) => {
-          this.options = response.data;
-        })
-        .catch((e) => {
-          alert(e);
-        });
     },
     /**
      * Call api to CREATE EMPLOYEE
      * Author: CTKimYen (9/12/2021)
      */
-    createEmployee(){
+    createEmployee() {
       let _this = this;
       EmployeeService.create(this.employee)
         .then(function () {
@@ -259,7 +316,7 @@ export default {
      * Call api to update EMPLOYEE DATA
      * Author: CTKimYen (9/12/2021)
      */
-    updateEmployee(id, model){
+    updateEmployee(id, model) {
       let _this = this;
       EmployeeService.update(id, model)
         .then(function () {
@@ -281,11 +338,36 @@ export default {
           }
         });
     },
+    /**
+     * close modal
+     * Author: KimYen (6/12/2021)
+     */
+    btnCloseOnclick() {
+      this.$emit("showModal", false);
+      this.submitted = false;
+    },
+    /**
+     * Get all department in databse
+     * Author: CTKimYen (9/12/2021)
+     */
+    getAllDepartments() {
+      DepartmentService.getAll()
+        .then((response) => {
+          this.departments = response.data;
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
 
   },
-  created(){
+
+  created() {
     this.getAllDepartments();
   },
-  
 };
 </script>
+
+<style scoped>
+@import url("../../assets/css/component/combobox.css");
+</style>
