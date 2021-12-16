@@ -23,7 +23,7 @@
         </div>
         <!-- end input search -->
         <!-- button refresh -->
-        <div class="mi mi-24 mi-refresh"></div>
+        <div class="mi mi-24 mi-refresh" @click="getAllData()"></div>
         <!-- end button refresh -->
       </div>
       <div class="m-content-table">
@@ -67,7 +67,10 @@
 
                 <div
                   class="mi mi-14 mi-arrow-up-blue m-dropdown"
-                  :class="{ 'm-dropdown-active': showBtnDel && EmployeeId === employee.EmployeeId}"
+                  :class="{
+                    'm-dropdown-active':
+                      showBtnDel && EmployeeId === employee.EmployeeId,
+                  }"
                   @click="btnShowDelOnclick(employee.EmployeeId)"
                 >
                   <div
@@ -82,17 +85,23 @@
             </tr>
           </tbody>
         </table>
-        
-          <div v-if="!employees" style="padding: 2em 0">
-            <div style="display: flex; justify-content: center">
-              <img style="width: 132px" src="https://actappg2.misacdn.net/img/bg_report_nodata.76e50bd8.svg" alt="">
-            </div>
-            <p style="margin-top: 1em; text-align: center">Không có dữ liệu</p>
+
+        <div v-if="!employees" style="padding: 2em 0">
+          <div style="display: flex; justify-content: center">
+            <img
+              style="width: 132px"
+              src="https://actappg2.misacdn.net/img/bg_report_nodata.76e50bd8.svg"
+              alt=""
+            />
           </div>
+          <p style="margin-top: 1em; text-align: center">Không có dữ liệu</p>
+        </div>
       </div>
       <!-- paginate -->
       <div class="m-paginate" v-if="employees">
-        <div class="m-paging-left">Tổng số: <b>{{ TotalRecord }}</b> bản ghi</div>
+        <div class="m-paging-left">
+          Tổng số: <b>{{ TotalRecord }}</b> bản ghi
+        </div>
         <div class="m-paging-right">
           <select name="" id="" class="m-dropdown" v-model="pageSize">
             <option value="10">10 bản ghi/ trang</option>
@@ -125,6 +134,7 @@
       :mode="formMode"
       @showModal="showModal"
       @getAllData="getAllData"
+      @resetFormData="resetFormData"
     />
 
     <!-- POP UP DELETE -->
@@ -161,12 +171,11 @@ export default {
       employees: [],
       // id nhân viên
       EmployeeId: "",
-      employeeCode: "",
       // 1 đối tượng nhân viên
       employee: {
         EmployeeCode: "",
         EmployeeName: "",
-        DateOfBirth: new Date(),
+        DateOfBirth: null,
         Gender: 1,
         DepartmentId: "",
         EmployeePosition: "",
@@ -175,7 +184,7 @@ export default {
         PhoneNumber: "",
         Email: "",
         IdentityNumber: "",
-        IdentityDate: new Date(),
+        IdentityDate: null,
         IdentityPlace: "",
         BankAccountNumber: "",
         BankName: "",
@@ -200,14 +209,6 @@ export default {
     };
   },
   methods: {
-    btnShowDelOnclick(id){
-      this.EmployeeId = id;
-      this.showBtnDel = !this.showBtnDel;
-    },
-    pageChangeHandler(selectedPage) {
-    this.currentPage = selectedPage;
-    this.getAllData();
-  },
     /**
      * Format input type date
      * Author: CTKimYen (10/12/2021)
@@ -223,25 +224,7 @@ export default {
      * Author:CTKimYen (6/12/2021)
      */
     btnAddOnclick() {
-      (this.employee = {
-        EmployeeCode: "",
-        EmployeeName: "",
-        DateOfBirth: "",
-        Gender: 1,
-        DepartmentId: "",
-        EmployeePosition: "",
-        Address: "",
-        TelephoneNumber: "",
-        PhoneNumber: "",
-        Email: "",
-        IdentityNumber: "",
-        IdentityDate: "",
-        IdentityPlace: "",
-        BankAccountNumber: "",
-        BankName: "",
-        BankBranchName: "",
-      }),
-        this.getNewEmployeeCode();
+      this.getNewEmployeeCode();
       this.formMode = 0;
       this.showModal(true);
     },
@@ -324,6 +307,47 @@ export default {
           alert(e);
         });
     },
+
+    /**
+     * reset form data Employee detail
+     * Author: CTKimYen (9/12/2021)
+     */
+    resetFormData() {
+      this.employee = {
+        EmployeeCode: "",
+        EmployeeName: "",
+        DateOfBirth: null,
+        Gender: 1,
+        DepartmentId: "",
+        EmployeePosition: "",
+        Address: "",
+        TelephoneNumber: "",
+        PhoneNumber: "",
+        Email: "",
+        IdentityNumber: "",
+        IdentityDate: null,
+        IdentityPlace: "",
+        BankAccountNumber: "",
+        BankName: "",
+        BankBranchName: "",
+      };
+    },
+    /**
+     * When click button menu dropdown
+     * Author: CTKimYen (15/10/2021)
+     */
+    btnShowDelOnclick(id) {
+      this.EmployeeId = id;
+      this.showBtnDel = !this.showBtnDel;
+    },
+    /**
+     * When change current page
+     * Author: CTKimYen (15/12/2021)
+     */
+    pageChangeHandler(selectedPage) {
+      this.currentPage = selectedPage;
+      this.getAllData();
+    },
   },
 
   created() {
@@ -347,14 +371,18 @@ export default {
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
   },
-  
-  watch:{
-    pageSize: function(){
+  /**
+   * Author: CTKimYen (15/12/2021)
+   */
+  watch: {
+    // follow input items-per-page change
+    pageSize: function () {
       this.getAllData();
     },
-    inputSearch: function(){
+    // follow input-search change
+    inputSearch: function () {
       this.getAllData();
-    }
-  }
+    },
+  },
 };
 </script>

@@ -10,6 +10,14 @@ class EmployeeService {
     return http.get("/api/v1/Employees");
   }
   /**
+   * api lấy ra nhân viên theo id
+   * @param {string} id Id nhân viên
+   * @returns nhân viên
+   */
+  getSingle(id){
+    return http.get(`/api/v1/Employees/${id}`);
+  }
+  /**
    * api lấy ra mã nhân viên mới
    * @returns mã nhân viên mới
    * Author: CTKYen (8/12/2021)

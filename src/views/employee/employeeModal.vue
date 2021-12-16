@@ -225,7 +225,7 @@
             >
               Cất
             </button>
-            <button type="submit" class="m-btn">Cất và thêm</button>
+            <button type="submit" class="m-btn" @click="btnSaveAndNew()">Cất và thêm</button>
           </div>
         </section>
         <!-- end modal footer -->
@@ -239,7 +239,10 @@
     <alert
       :showAlert="isShowAlert"
       :messageAlert="messageAlert"
+      :status="alertStatus"
       @showAlertError="showAlertError"
+      @save="btnSaveOnclick"
+      @hideModal="btnCancelOnclick"
     />
     <!-- END ALERT ER -->
   </div>
@@ -265,9 +268,11 @@ export default {
       isShowAlert: false,
       // message error info
       messageAlert: "",
+      // alert status danger
+      alertStatus: 0,
 
       // check form is changed or not
-      formChanged: false,
+      formChanged: 0,
     };
   },
   validations: {
@@ -284,10 +289,14 @@ export default {
      */
     btnSaveOnclick() {
       this.submitted = true;
+
       this.$v.$touch();
       let _this = this;
       // validate input data and return if form is invalid
       if (_this.$v.$invalid) {
+
+        _this.alertStatus = 0;
+
         // Check validate Employee Code
         if (_this.submitted && _this.$v.employee.EmployeeCode.$error) {
           _this.messageAlert = "Mã không được để trống.";
@@ -311,12 +320,19 @@ export default {
       if (this.mode == 0) {
         // add
         this.createEmployee();
-        this.submitted = false;
       } else {
         // update
         this.updateEmployee(this.employeeId, this.employee);
-        this.submitted = false;
       }
+      this.submitted = false;
+    },
+    /**
+     * When click btn Cất và thêm
+     * Author: CTKimYen (15/12/2021)
+     */
+    btnSaveAndNew(){
+      this.btnSaveOnclick();
+      this.$emit("showModal", true);
     },
     /**
      * Call api to CREATE EMPLOYEE
@@ -334,7 +350,8 @@ export default {
             case 400: {
               let data = res.response.data;
               if (data) {
-                _this.messageAlert = data.userMsg;
+                _this.alertStatus = 0;
+                _this.messageAlert = `Mã nhân viên <${_this.employee.EmployeeCode}> đã tồn tại trong hệ thống, vui lòng kiểm tra lại.`;
                 _this.showAlertError(true);
               }
               break;
@@ -361,6 +378,7 @@ export default {
             case 400: {
               let data = res.response.data;
               if (data) {
+                _this.alertStatus = 0;
                 _this.messageAlert = data.userMsg;
                 _this.showAlertError(true);
               }
@@ -376,7 +394,10 @@ export default {
      * Author: KimYen (6/12/2021)
      */
     btnCloseOnclick() {
-      if(this.formChanged){
+      if(this.formChanged > 1){
+        // alert status question
+        this.alertStatus = 1;
+        this.messageAlert = "Dữ liệu đã được thay đổi. Bạn có muốn lưu?";
         this.showAlertError(true);
       }
       else
@@ -387,10 +408,12 @@ export default {
      * When click button Cancel modal
      * Author: KimYen (15/12/2021)
      */
-    btnCancelOnclick() {
-      this.formChanged = false;
-      this.submitted = false;
+    async btnCancelOnclick() {
+      await this.$emit("resetFormData");
       this.$emit("showModal", false);
+      this.submitted = false;
+      this.formChanged = 0;
+      console.log(this.formChanged)
     },
     /**
      * Get all department in databse
@@ -418,15 +441,15 @@ export default {
     this.getAllDepartments();
   },
 
-  // watch: {
-  //   // theo doi su thay doi cua form input
-  //   employee: {
-  //     handler: function () {
-  //       this.formChanged = true;
-  //     },
-  //     deep: true,
-  //   },
-  // },
+  watch: {
+    // theo doi su thay doi cua form input
+    employee: {
+      handler: function () {
+        this.formChanged += 1;
+      },
+      deep: true,
+    },
+  },
 };
 </script>
 
