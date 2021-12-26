@@ -11,60 +11,96 @@
     <!-- Content main -->
     <div class="m-content-main">
       <div class="m-row">
-        <!-- input search -->
-        <div class="m-input-search">
-          <input
-            type="text"
-            class="m-input-icon"
-            placeholder="Tìm theo mã, tên nhân viên"
-            v-model="inputSearch"
-          />
-          <div class="mi mi-16 mi-search"></div>
+        <div
+          class="m-bar-table-left"
+          @click="showBtnDelMulti = !showBtnDelMulti"
+        >
+          <div
+            class="m-dropdown"
+            :class="{
+              'm-dropdown-active':
+                showBtnDelMulti && selectedEmployees.length > 0,
+            }"
+          >
+            <b class="mr-4">Thực hiện hàng loạt</b
+            ><i class="mi mi-16 mi-arrow-up-black"></i>
+            <div class="m-dropdown-item">
+              <div @click="deleteMultiRecords()">Xóa nhiều</div>
+            </div>
+          </div>
         </div>
-        <!-- end input search -->
-        <!-- button refresh -->
-        <div class="mi mi-24 mi-refresh" @click="getAllData()"></div>
-        <!-- end button refresh -->
+
+        <div class="m-bar-table-right">
+          <!-- input search -->
+          <div class="m-input-search">
+            <input
+              type="text"
+              class="m-input-icon"
+              placeholder="Tìm theo mã, tên nhân viên"
+              v-model="inputSearch"
+            />
+            <div class="mi mi-16 mi-search"></div>
+          </div>
+          <!-- end input search -->
+          <!-- button refresh -->
+          <div class="mi mi-24 mi-refresh" @click="getAllData()"></div>
+          <!-- end button refresh -->
+          <!-- button export file excel -->
+          <div class="mi mi-24 mi-excel" @click="exportFile()"></div>
+          <!-- end button export file  -->
+        </div>
       </div>
       <div class="m-content-table">
         <!-- table -->
         <table class="m-table" id="tblEmployee">
           <thead class="m-text-left">
             <tr>
-              <th><input type="checkbox" class="m-checkbox" /></th>
-              <th>Mã nhân viên</th>
+              <th style="width: 3%">
+                <input
+                  type="checkbox"
+                  class="m-checkbox"
+                  @click="onClickCheckAll()"
+                  v-model="isCheckAll"
+                />
+              </th>
+              <th style="width: 7.5%">Mã nhân viên</th>
               <th>Tên nhân viên</th>
-              <th>Giới tính</th>
-              <th class="m-text-center">Ngày sinh</th>
-              <th>Số CMND</th>
-              <th>Điện thoại</th>
-              <th>Email</th>
-              <th>Địa chỉ</th>
-              <th>Tên ngân hàng</th>
-              <th>Chức vụ</th>
-              <th>Chức năng</th>
+              <th style="width: 3%">Giới tính</th>
+              <th style="width: 5%">Ngày sinh</th>
+              <th style="width: 11%">Chức danh</th>
+              <th style="width: 7%">Số CMND</th>
+              <th style="width: 13%">Tên đơn vị</th>
+              <th style="width: 10%">Số tài khoản</th>
+              <th style="width: 10%">Tên ngân hàng</th>
+              <th style="width: 5%">Chức năng</th>
             </tr>
           </thead>
           <tbody v-if="employees">
             <tr v-for="employee in employees" :key="employee.EmployeeId">
-              <td><input type="checkbox" class="m-checkbox" /></td>
-              <td>{{ employee.EmployeeCode }}</td>
-              <td>{{ employee.EmployeeName }}</td>
-              <td>{{ employee.GenderName }}</td>
-              <td class="m-text-center">
+              <td v-if="!loading">
+                <input
+                  type="checkbox"
+                  class="m-checkbox"
+                  v-bind:value="employee.EmployeeId"
+                  v-model="selectedEmployees"
+                  @change="updateCheckAll()"
+                />
+              </td>
+              <td v-if="!loading">{{ employee.EmployeeCode }}</td>
+              <td v-if="!loading">{{ employee.EmployeeName }}</td>
+              <td v-if="!loading">{{ employee.GenderName }}</td>
+              <td class="m-text-center" v-if="!loading">
                 {{ employee.DateOfBirth | formatDate }}
               </td>
-              <td>{{ employee.IdentityNumber }}</td>
-              <td>{{ employee.TelephoneNumber }}</td>
-              <td>{{ employee.Email }}</td>
-              <td>{{ employee.Address }}</td>
-              <td>{{ employee.BankName }}</td>
-              <td>{{ employee.EmployeePosition }}</td>
-              <td>
+              <td v-if="!loading">{{ employee.PositionName }}</td>
+              <td v-if="!loading">{{ employee.IdentityNumber }}</td>
+              <td v-if="!loading">{{ employee.DepartmentName }}</td>
+              <td v-if="!loading">{{ employee.BankAccount }}</td>
+              <td v-if="!loading">{{ employee.BankName }}</td>
+              <td v-if="!loading">
                 <b class="m-btn-edit" @click="btnUpdateOnClick(employee)"
                   >Sửa</b
                 >
-
                 <div
                   class="mi mi-14 mi-arrow-up-blue m-dropdown"
                   :class="{
@@ -73,19 +109,21 @@
                   }"
                   @click="btnShowDelOnclick(employee.EmployeeId)"
                 >
-                  <div
-                    class="m-dropdown-item"
-                    @click="btnDeleteOnClick(employee)"
-                  >
-                    Xóa
+                  <div class="m-dropdown-item">
+                    <div @click="btnDeleteOnClick(employee)">Xóa</div>
+                    <div @click="btnDuplicateOnclick(employee)">Nhân bản</div>
                   </div>
                 </div>
-                <!-- <b class="m-btn-edit" @click="btnDeleteOnClick(employee)">Xóa</b> -->
+              </td>
+              <!-- Placehoder when loading -->
+              <td v-for="col in cols" :key="col">
+                <content-placeholders>
+                  <content-placeholders-text :lines="1" />
+                </content-placeholders>
               </td>
             </tr>
           </tbody>
         </table>
-
         <div v-if="!employees" style="padding: 2em 0">
           <div style="display: flex; justify-content: center">
             <img
@@ -104,9 +142,9 @@
         </div>
         <div class="m-paging-right">
           <select name="" id="" class="m-dropdown" v-model="pageSize">
-            <option value="10">10 bản ghi/ trang</option>
             <option value="30">30 bản ghi/ trang</option>
             <option value="50">50 bản ghi/ trang</option>
+            <option value="100">100 bản ghi/ trang</option>
           </select>
           <div class="m-paging plr-6">
             <sliding-pagination
@@ -174,21 +212,22 @@ export default {
       // 1 đối tượng nhân viên
       employee: {
         EmployeeCode: "",
-        EmployeeName: "",
+        EmployeeName: null,
         DateOfBirth: null,
         Gender: 1,
         DepartmentId: "",
-        EmployeePosition: "",
+        DepartmentName: "",
+        PositionName: "",
         Address: "",
-        TelephoneNumber: "",
-        PhoneNumber: "",
-        Email: "",
-        IdentityNumber: "",
+        TelephoneNumber: null,
+        PhoneNumber: null,
+        Email: null,
+        IdentityNumber: null,
         IdentityDate: null,
         IdentityPlace: "",
-        BankAccountNumber: "",
+        BankAccount: "",
         BankName: "",
-        BankBranchName: "",
+        BankBranch: "",
       },
       // show modal employee detail
       isShowModal: false,
@@ -201,30 +240,28 @@ export default {
       // tổng số trang
       totalPages: 0,
       // số bản ghi trên trang
-      pageSize: 10,
+      pageSize: 30,
       // tổng số bản ghi
       TotalRecord: 0,
       // input tìm kiếm theo mã hoặc tên
       inputSearch: "",
+      // Check all
+      isCheckAll: false,
+      selectedEmployees: [],
+      // btn del multi
+      showBtnDelMulti: false,
+      // placehoder when loading
+      loading: false,
+      cols: 0,
     };
   },
   methods: {
     /**
-     * Format input type date
-     * Author: CTKimYen (10/12/2021)
-     */
-    formatDate(dateTime) {
-      var date = new Date(dateTime);
-      var day = ("0" + date.getDate()).slice(-2);
-      var month = ("0" + (date.getMonth() + 1)).slice(-2);
-      return date.getFullYear() + "-" + month + "-" + day;
-    },
-    /**
      * When click button ADD NEW EMPLOYEE and SHOW MODAL ADD
      * Author:CTKimYen (6/12/2021)
      */
-    btnAddOnclick() {
-      this.getNewEmployeeCode();
+    async btnAddOnclick() {
+      await this.getNewEmployeeCode();
       this.formMode = 0;
       this.showModal(true);
     },
@@ -232,10 +269,15 @@ export default {
      * When click button UPDATE and SHOW MODAL DETAIL
      * Author:CTKimYen (9/12/2021)
      */
-    btnUpdateOnClick(model) {
-      (this.EmployeeId = model.EmployeeId), (this.employee = model);
-      this.employee.DateOfBirth = this.formatDate(model.DateOfBirth);
-      this.employee.IdentityDate = this.formatDate(model.IdentityDate);
+    async btnUpdateOnClick(model) {
+      let _this = this;
+      await EmployeeService.getSingle(model.EmployeeId).then(function (res) {
+        let e = res.data;
+        (_this.EmployeeId = model.EmployeeId), (_this.employee = e);
+        _this.employee.DateOfBirth = _this.formatDate(e.DateOfBirth);
+        _this.employee.IdentityDate = _this.formatDate(e.IdentityDate);
+      });
+
       this.formMode = 1;
       this.showModal(true);
     },
@@ -251,11 +293,19 @@ export default {
      * Author:CTKimYen (8/12/2021)
      */
     getAllData() {
+      this.loading = true;
+      this.cols = 11;
+      let _this = this;
       EmployeeService.filter(this.pageSize, this.currentPage, this.inputSearch)
         .then((response) => {
-          this.employees = response.data.Data;
-          this.totalPages = response.data.TotalPage;
-          this.TotalRecord = response.data.TotalRecord;
+          _this.employees = response.data.Data;
+          _this.totalPages = response.data.TotalPage;
+          _this.TotalRecord = response.data.TotalRecord;
+          
+          setTimeout(()=>{
+            _this.cols = 0,
+            _this.loading = false;
+          } , 0);
         })
         .catch((e) => {
           alert(e);
@@ -265,8 +315,8 @@ export default {
      * Call api get new employee code
      * Author: CTKimYen (6/12/2021)
      */
-    getNewEmployeeCode() {
-      EmployeeService.getNewEmployeeCode()
+    async getNewEmployeeCode() {
+      await EmployeeService.getNewEmployeeCode()
         .then((response) => {
           this.employee.EmployeeCode = response.data;
         })
@@ -307,6 +357,26 @@ export default {
           alert(e);
         });
     },
+    /**
+     * When click button delete multi record
+     * Author: CTKimYen (25/12/2021)
+     */
+    btnDelMultiOnclick() {
+      // show popup confirm
+      this.showPopupDel(true);
+    },
+    /**
+     * Delete multi employees
+     * Author: CTKimYen (25/12/2021)
+     */
+    deleteMultiRecords() {
+      let _this = this;
+      EmployeeService.deleteMulti(this.selectedEmployees).then(function () {
+        // Hide popup confirm
+        _this.showPopupDel(false);
+        _this.getAllData();
+      });
+    },
 
     /**
      * reset form data Employee detail
@@ -319,7 +389,7 @@ export default {
         DateOfBirth: null,
         Gender: 1,
         DepartmentId: "",
-        EmployeePosition: "",
+        PositionName: "",
         Address: "",
         TelephoneNumber: "",
         PhoneNumber: "",
@@ -327,10 +397,22 @@ export default {
         IdentityNumber: "",
         IdentityDate: null,
         IdentityPlace: "",
-        BankAccountNumber: "",
+        BankAccount: "",
         BankName: "",
-        BankBranchName: "",
+        BankBranch: "",
       };
+    },
+    /**
+     * Format input type date
+     * Author: CTKimYen (10/12/2021)
+     */
+    formatDate(dateTime) {
+      if (dateTime) {
+        var date = new Date(dateTime);
+        var day = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        return date.getFullYear() + "-" + month + "-" + day;
+      }
     },
     /**
      * When click button menu dropdown
@@ -347,6 +429,65 @@ export default {
     pageChangeHandler(selectedPage) {
       this.currentPage = selectedPage;
       this.getAllData();
+    },
+    /**
+     * When click button Export File Excel
+     * Author: CTKimYen (26/12/2021)
+     */
+    exportFile() {
+      EmployeeService.exportFile(this.employees);
+    },
+    /**
+     * Click checkbox select all
+     * Author: CTKimYen (24/12/2021)
+     */
+    onClickCheckAll() {
+      this.isCheckAll = !this.isCheckAll;
+      this.selectedEmployees = [];
+      if (this.isCheckAll) {
+        // Check all
+        for (var i in this.employees) {
+          this.selectedEmployees.push(this.employees[i].EmployeeId);
+        }
+      }
+      console.log(this.selectedEmployees);
+    },
+
+    /**
+     * Update selected list if change selected emoloyee
+     * Author: CTKimYen (24/12/2021)
+     */
+    updateCheckAll() {
+      if (this.selectedEmployees.length == this.employees.length) {
+        this.isCheckAll = true;
+      } else {
+        this.isCheckAll = false;
+      }
+      console.log(this.selectedEmployees);
+    },
+    /**
+     * When click button duplicate in menu context
+     * Author: CTKimYen (26/12/2021)
+     */
+    async btnDuplicateOnclick(employee) {
+      await this.getNewEmployeeCode();
+      this.employee.EmployeeName = employee.EmployeeName;
+      this.employee.PositionName = employee.PositionName;
+      this.employee.Gender = employee.Gender;
+      this.employee.DepartmentId = employee.DepartmentId;
+      this.employee.IdentityNumber = employee.IdentityNumber;
+      this.employee.Address = employee.Address;
+      this.employee.IdentityPlace = employee.IdentityPlace;
+      this.employee.PhoneNumber = employee.PhoneNumber;
+      this.employee.Email = employee.Email;
+      this.employee.BankAccount = employee.BankAccount;
+      this.employee.BankName = employee.BankName;
+      this.employee.BankBranch = employee.BankBranch;
+      this.employee.DateOfBirth = this.formatDate(employee.DateOfBirth);
+      this.employee.IdentityDate = this.formatDate(employee.IdentityDate);
+      this.formMode = 0;
+      this.EmployeeId = null;
+      this.showModal(true);
     },
   },
 

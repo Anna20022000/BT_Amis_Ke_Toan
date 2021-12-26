@@ -32,6 +32,7 @@ class EmployeeService {
    * Author: CTKYen (8/12/2021)
    */
   create(data) {
+    data.Gender = Number.parseInt(data.Gender);
     return http.post("/api/v1/Employees", data);
   }
   /**
@@ -42,6 +43,7 @@ class EmployeeService {
    * Author: CTKYen (8/12/2021)
    */
   update(id, data) {
+    data.Gender = Number.parseInt(data.Gender);
     return http.put(`/api/v1/Employees/${id}`, data);
   }
   /**
@@ -54,16 +56,33 @@ class EmployeeService {
     return http.delete(`/api/v1/Employees/${entityId}`);
   }
   /**
+   * api xóa nhiều nhân viên theo khóa chính
+   * @param {list<string>} listEntityId danh sách id nhân viên
+   * @returns Số lượng bản ghi xóa thành công
+   * Author: CTKimYen (25/12/2021)
+   */
+  deleteMulti(listEntityId){
+    return http.delete(`/api/v1/Employees/deleteMulti`, {data: listEntityId});
+  }
+  /**
    * api tìm kiếm, phân trang danh sách nhân viên theo điều kiện
    * @param {number} pageSize Số bản ghi/ trang
    * @param {number} pageNumber Trang số bao nhiêu
    * @param {string} employeeFilter Điều kiện để lọc dữ liệu (mã, tên hoặc sđt)
    * @returns Danh sách nhân viên thỏa mãn điều kiện lọc
-   * Author: CTKYen (8/12/2021)s
+   * Author: CTKYen (8/12/2021)
    */
   filter(pageSize, pageNumber, employeeFilter){
-    return http.get(`/api/v1/Employees/filter?pageSize=${pageSize}&pageNumber=${pageNumber}
-    &employeeFilter=${employeeFilter}`)
+    return http.get(`/api/v1/Employees/filter?limit=${pageSize}&pageIndex=${pageNumber}
+    &searchText=${employeeFilter}`)
+  }
+  /**
+   * api export and dowmload file excel
+   * Author: CTKimYen (26/12/2021)
+   */
+  exportFile(){
+    // return http.get('/api/v1/Employees/export');
+    window.open("http://localhost:18204/api/v1/Employees/export", "_blank");
   }
 }
 

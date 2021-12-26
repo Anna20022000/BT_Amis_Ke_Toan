@@ -19,6 +19,7 @@ table.m-table tr > th {
   text-transform: uppercase;
   font-size: 12px;
   font-family: 'NotoSans-Bold';
+  text-align: center;
 }
 
 table.m-table tbody tr:hover {
@@ -31,7 +32,9 @@ th {
   border-right: 1px dotted #c7c7c7;
   white-space: pre-wrap;
 }
-
+table .m-text-center{
+  line-height: 1px;
+}
 /* column edit in table */
 .m-table tr>td:last-child{
   height: 48px;

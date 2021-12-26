@@ -99,6 +99,9 @@
 .mi-arrow-up-blue{
     background-position: -896px -360px;
 }
+.mi-arrow-up-black {
+    background-position: -560px -359px;
+}
 .mi-close {
     background-position: -144px -144px;
 }
@@ -117,4 +120,7 @@
 }
 .mi-question{
     background-position: -826px -456px;
+}
+.mi-excel{
+    background-position: -704px -200px;
 }

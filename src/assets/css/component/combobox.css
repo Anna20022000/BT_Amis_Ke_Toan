@@ -140,8 +140,8 @@
     cursor: pointer;
   }
   .vs__dropdown-option--highlight {
-    background: #5897fb;
-    color: #fff;
+    background: #f0f0f0;
+    color: #08bf1e;
   }
   .vs__dropdown-option--deselect {
     background: #fb5858;

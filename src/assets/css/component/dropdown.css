@@ -1,36 +1,70 @@
-.m-dropdown{
-    position: relative;
-    padding: 4px 10px;
+.m-dropdown {
+  position: relative;
+  padding: 4px 10px;
 }
-.m-dropdown div.m-dropdown-item{
-    display: none;
-    background-color: #fff !important;
-    white-space: nowrap;
-    transition: all .2s ease;
-    position: absolute;
-    top: 18px;
-    left: -80px;
-    z-index: 111;
-    text-align: left;
-    min-width: 100px;
-    font-weight: 400!important;
-    font-size: 13px;
-    padding: 5px;
-    border: 1px solid #b8bcc3;
+.m-dropdown div.m-dropdown-item {
+  display: none;
+  background-color: #fff !important;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 18px;
+  left: -80px;
+  z-index: 111;
+  text-align: left;
+  min-width: 100px;
+  font-weight: 400 !important;
+  font-size: 13px;
+  padding: 1px 0;
+  border: 1px solid #b8bcc3;
 }
-.m-dropdown-active{
-    border: 1px solid #0075c0;
+.m-dropdown-active {
+  border: 1px solid #0075c0;
 }
-.m-dropdown-active > div.m-dropdown-item{
-    display: block;
+
+.m-dropdown-active > div.m-dropdown-item {
+  display: block;
 }
-div.m-dropdown-item:hover{
-    color: #08bf1e;
+div.m-dropdown-item > div {
+  height: 28px;
+  box-sizing: border-box;
+  padding: 5px 10px;
 }
-.m-dropdown-menu{
-    background: #fff;
-    padding: 2px 1px;
-    border-radius: 2px;
-    border: 1px solid #babec5;
-    position: relative;
+div.m-dropdown-item > div:hover {
+  color: #08bf1e;
+  background-color: #eef0f2;
+}
+.m-dropdown-menu {
+  background: #fff;
+  padding: 2px 1px;
+  border-radius: 2px;
+  border: 1px solid #babec5;
+  position: relative;
+}
+
+/* LEFT NAV TABLE */
+/* dropdown delete multi */
+.m-content-main .m-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+.m-content-main .m-row .m-bar-table-left .m-dropdown {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 30px;
+  border: 2px solid #3b3c3f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.m-content-main .m-row .m-bar-table-left .m-dropdown:hover {
+  background-color: #d2d3d6;
+}
+.m-dropdown-item{
+  top: 110% !important;
+  left: 40% !important;
+  z-index: 1111 !important;
+  cursor: pointer;
 }

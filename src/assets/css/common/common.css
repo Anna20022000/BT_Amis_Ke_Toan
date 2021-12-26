@@ -36,14 +36,21 @@
     padding-left: 1.5rem!important;
     padding-right: 1.5rem!important;
 }
+
 .pr-6 {
     padding-right: 6px;
 }
 .pr-26 {
     padding-right: 26px;
 }
+.mr-4 {
+    margin-right: 4px;
+}
 .mr-10{
     margin-right: 10px ;
+}
+.mr-20{
+    margin-right: 20px ;
 }
 
 /* set width */

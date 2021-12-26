@@ -6,14 +6,14 @@
       <nav class="m-modal-header">
         <div class="mo-header-left">
           <span class="m-modal-title">Thông tin nhân viên</span>
-          <div class="plr-6 m-checkbox-label">
+          <!-- <div class="plr-6 m-checkbox-label">
             <input type="checkbox" class="m-checkbox" />
             <label>Là khách hàng</label>
           </div>
           <div class="plr-6 m-checkbox-label">
             <input type="checkbox" class="m-checkbox" />
             <label>Là nhà cung cấp</label>
-          </div>
+          </div> -->
         </div>
         <div class="mo-header-right">
           <div class="mi mi-24 mi-help"></div>
@@ -36,9 +36,8 @@
                 v-model="employee.EmployeeCode"
                 :class="{
                   'm-is-invalid': submitted && $v.employee.EmployeeCode.$error,
-                }
-                "
-                />
+                }"
+              />
             </div>
             <div class="w-60 form-group">
               <label class="m-fc-name"
@@ -66,7 +65,7 @@
             <div class="w-60">
               <label class="m-fc-name">Giới tính</label>
               <div class="m-radio-region">
-                <div class="plr-6 m-radio-label">
+                <div class="mr-20 m-radio-label">
                   <input
                     type="radio"
                     class="m-radio"
@@ -76,7 +75,7 @@
                   />
                   <label for="gender">Nam</label>
                 </div>
-                <div class="plr-6 m-radio-label">
+                <div class="mr-20 m-radio-label">
                   <input
                     type="radio"
                     class="m-radio"
@@ -85,6 +84,16 @@
                     v-model="employee.Gender"
                   />
                   <label for="gender">Nữ</label>
+                </div>
+                <div class="m-radio-label">
+                  <input
+                    type="radio"
+                    class="m-radio"
+                    name="gender"
+                    value="2"
+                    v-model="employee.Gender"
+                  />
+                  <label for="gender">Khác</label>
                 </div>
               </div>
             </div>
@@ -131,7 +140,7 @@
             <input
               type="text"
               class="m-input form-control"
-              v-model="employee.EmployeePosition"
+              v-model="employee.PositionName"
             />
           </div>
           <div class="w-50">
@@ -189,7 +198,7 @@
               <input
                 type="text"
                 class="m-input form-control"
-                v-model="employee.BankAccountNumber"
+                v-model="employee.BankAccount"
               />
             </div>
             <div class="w-25 pr-6">
@@ -205,7 +214,7 @@
               <input
                 type="text"
                 class="m-input form-control"
-                v-model="employee.BankBranchName"
+                v-model="employee.BankBranch"
               />
             </div>
           </div>
@@ -225,7 +234,9 @@
             >
               Cất
             </button>
-            <button type="submit" class="m-btn" @click="btnSaveAndNew()">Cất và thêm</button>
+            <button type="submit" class="m-btn" @click="btnSaveAndNew()">
+              Cất và thêm
+            </button>
           </div>
         </section>
         <!-- end modal footer -->
@@ -287,14 +298,13 @@ export default {
      * When click btn SAVE, save a new employee into database
      * Author: KimYen (10/12/2021)
      */
-    btnSaveOnclick() {
+    async btnSaveOnclick() {
       this.submitted = true;
 
       this.$v.$touch();
       let _this = this;
       // validate input data and return if form is invalid
       if (_this.$v.$invalid) {
-
         _this.alertStatus = 0;
 
         // Check validate Employee Code
@@ -319,28 +329,29 @@ export default {
       // If mode = 0 => add
       if (this.mode == 0) {
         // add
-        this.createEmployee();
+        await this.createEmployee();
       } else {
         // update
-        this.updateEmployee(this.employeeId, this.employee);
+        await this.updateEmployee(this.employeeId, this.employee);
       }
-      this.submitted = false;
+      // this.submitted = false;
+      await this.btnCancelOnclick();
     },
     /**
      * When click btn Cất và thêm
      * Author: CTKimYen (15/12/2021)
      */
-    btnSaveAndNew(){
-      this.btnSaveOnclick();
+    async btnSaveAndNew() {
+      await this.btnSaveOnclick();
       this.$emit("showModal", true);
     },
     /**
      * Call api to CREATE EMPLOYEE
      * Author: CTKimYen (9/12/2021)
      */
-    createEmployee() {
+    async createEmployee() {
       let _this = this;
-      EmployeeService.create(this.employee)
+      await EmployeeService.create(this.employee)
         .then(function () {
           _this.$emit("showModal", false);
           _this.$emit("getAllData");
@@ -351,7 +362,7 @@ export default {
               let data = res.response.data;
               if (data) {
                 _this.alertStatus = 0;
-                _this.messageAlert = `Mã nhân viên <${_this.employee.EmployeeCode}> đã tồn tại trong hệ thống, vui lòng kiểm tra lại.`;
+                _this.messageAlert = data.data[0];
                 _this.showAlertError(true);
               }
               break;
@@ -366,9 +377,9 @@ export default {
      * Call api to update EMPLOYEE DATA
      * Author: CTKimYen (9/12/2021)
      */
-    updateEmployee(id, model) {
+    async updateEmployee(id, model) {
       let _this = this;
-      EmployeeService.update(id, model)
+      await EmployeeService.update(id, model)
         .then(function () {
           _this.$emit("showModal", false);
           _this.$emit("getAllData");
@@ -379,7 +390,7 @@ export default {
               let data = res.response.data;
               if (data) {
                 _this.alertStatus = 0;
-                _this.messageAlert = data.userMsg;
+                _this.messageAlert = data.data[0];
                 _this.showAlertError(true);
               }
               break;
@@ -394,26 +405,27 @@ export default {
      * Author: KimYen (6/12/2021)
      */
     btnCloseOnclick() {
-      if(this.formChanged > 1){
+      if (this.formChanged > 2) {
         // alert status question
         this.alertStatus = 1;
         this.messageAlert = "Dữ liệu đã được thay đổi. Bạn có muốn lưu?";
         this.showAlertError(true);
-      }
-      else
-        this.btnCancelOnclick();
+      } else this.btnCancelOnclick();
     },
-    
+
     /**
      * When click button Cancel modal
      * Author: KimYen (15/12/2021)
      */
-    async btnCancelOnclick() {
-      await this.$emit("resetFormData");
-      this.$emit("showModal", false);
-      this.submitted = false;
-      this.formChanged = 0;
-      console.log(this.formChanged)
+    btnCancelOnclick() {
+      if (this.isShowAlert) {
+        this.submitted = false;
+      } else {
+        this.$emit("resetFormData");
+        this.$emit("showModal", false);
+        this.submitted = false;
+        this.formChanged = 0;
+      }
     },
     /**
      * Get all department in databse

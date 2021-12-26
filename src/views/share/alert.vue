@@ -50,6 +50,8 @@ export default {
          * Author: CTKimYen (16/12/2021)
          */
         btnYesOnclick(){
+            // close this popup
+            this.closePopup();
             // save changed of form input data in database
             this.$emit("save");
         }

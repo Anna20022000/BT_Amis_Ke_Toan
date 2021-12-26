@@ -6,9 +6,13 @@ import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 // use Vuelidate
 import Vuelidate from 'vuelidate'
+// vue placehoder
+import VueContentPlaceholders from 'vue-content-placeholders'
+
 
 Vue.component('v-select', vSelect)
 Vue.use(Vuelidate)
+Vue.use(VueContentPlaceholders)
 
 Vue.config.productionTip = false
 new Vue({
