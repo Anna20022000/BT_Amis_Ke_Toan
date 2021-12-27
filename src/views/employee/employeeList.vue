@@ -13,19 +13,18 @@
       <div class="m-row">
         <div
           class="m-bar-table-left"
-          @click="showBtnDelMulti = !showBtnDelMulti"
+          @click="isShowDelMulti()"
         >
           <div
             class="m-dropdown"
             :class="{
-              'm-dropdown-active':
-                showBtnDelMulti && selectedEmployees.length > 0,
+              'm-dropdown-active':showBtnDelMulti,
             }"
           >
             <b class="mr-4">Thực hiện hàng loạt</b
             ><i class="mi mi-16 mi-arrow-up-black"></i>
             <div class="m-dropdown-item">
-              <div @click="deleteMultiRecords()">Xóa nhiều</div>
+              <div @click="btnDelMultiOnclick()">Xóa nhiều</div>
             </div>
           </div>
         </div>
@@ -124,7 +123,7 @@
             </tr>
           </tbody>
         </table>
-        <div v-if="!employees" style="padding: 2em 0">
+        <div v-if="!employees || employees.length == 0 && !loading" style="padding: 2em 0">
           <div style="display: flex; justify-content: center">
             <img
               style="width: 132px"
@@ -136,7 +135,7 @@
         </div>
       </div>
       <!-- paginate -->
-      <div class="m-paginate" v-if="employees">
+      <div class="m-paginate" v-if="employees && employees.length > 0">
         <div class="m-paging-left">
           Tổng số: <b>{{ TotalRecord }}</b> bản ghi
         </div>
@@ -172,15 +171,18 @@
       :mode="formMode"
       @showModal="showModal"
       @getAllData="getAllData"
+      @btnAddOnclick="btnAddOnclick"
       @resetFormData="resetFormData"
+      @showPopupFromModal="showPopupFromModal"
     />
 
-    <!-- POP UP DELETE -->
-    <popup
-      :showPopup="isShowPopupDel"
-      :employeeCode="employee.EmployeeCode"
-      @deleteEmployee="deleteEmployee"
-      @showPopupDel="showPopupDel"
+    <alert
+      :showAlert="isShowPopup"
+      :messageAlert="messageAlert"
+      :status="popupStatus"
+      @deleteSingle="deleteEmployee"
+      @deleteMulti="deleteMultiRecords"
+      @showPopup="showPopup"
     />
     <!-- END POPUP DELETE -->
   </div>
@@ -190,21 +192,22 @@
 import moment from "moment"; // library format datetime
 import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
-import Popup from "../share/popup.vue";
+import Alert from "../share/alert.vue";
 import SlidingPagination from "vue-sliding-pagination";
+import Resource from "../../core/resources.js" // my resource
+
 
 export default {
   components: {
     EmployeeModal,
-    Popup,
+    Alert,
     SlidingPagination,
   },
-
   data() {
     return {
       // formMode = 0 - ADD
       // formMode = 1 - EDIT
-      formMode: 0,
+      formMode: Resource.Mode.Create,
       // danh sách nhân viên
       employees: [],
       // id nhân viên
@@ -234,7 +237,9 @@ export default {
       // show btn delete
       showBtnDel: false,
       // show popup confirm delete
-      isShowPopupDel: false,
+      isShowPopup: false,
+      messageAlert: "",
+      popupStatus: 2,
       // trang hiện tại
       currentPage: 1,
       // tổng số trang
@@ -262,7 +267,7 @@ export default {
      */
     async btnAddOnclick() {
       await this.getNewEmployeeCode();
-      this.formMode = 0;
+      this.formMode = Resource.Mode.Create;
       this.showModal(true);
     },
     /**
@@ -277,8 +282,7 @@ export default {
         _this.employee.DateOfBirth = _this.formatDate(e.DateOfBirth);
         _this.employee.IdentityDate = _this.formatDate(e.IdentityDate);
       });
-
-      this.formMode = 1;
+      this.formMode = Resource.Mode.Update;
       this.showModal(true);
     },
     /**
@@ -328,8 +332,13 @@ export default {
      * Show popup confirm delete an employee
      * Author: CTKimYen (14/12/2021)
      */
-    showPopupDel(isShow) {
-      this.isShowPopupDel = isShow;
+    showPopup(isShow) {
+      this.isShowPopup = isShow;
+    },
+    showPopupFromModal(msg, status){
+      this.messageAlert = msg;
+      this.popupStatus = status;
+      this.isShowPopup = true;
     },
     /**
      * show popup confirm delete
@@ -337,8 +346,10 @@ export default {
      */
     btnDeleteOnClick(model) {
       this.employee = model;
+      this.popupStatus = 2; // Xóa 1
+      this.messageAlert = Resource.Popup.TitleWithParam(model.EmployeeCode);
       // show popup confirm
-      this.showPopupDel(true);
+      this.showPopup(true);
     },
     /**
      * Delete an Employee in database depend primary key
@@ -350,20 +361,36 @@ export default {
       EmployeeService.delete(this.employee.EmployeeId)
         .then(function () {
           // Hide popup confirm
-          _this.showPopupDel(false);
+          _this.showPopup(false);
           _this.getAllData();
         })
         .catch(function (e) {
           alert(e);
         });
     },
+    
+    /**
+     * When click button Thực hiện hàng loạt
+     * Author: CTKimYen (26/12/2021)
+     */
+    isShowDelMulti(){
+      if(this.showBtnDelMulti == true){
+        this.showBtnDelMulti = false;
+      }
+      else if(this.selectedEmployees.length > 0){
+        this.showBtnDelMulti = true;
+      }
+    },
+
     /**
      * When click button delete multi record
      * Author: CTKimYen (25/12/2021)
      */
     btnDelMultiOnclick() {
+      this.popupStatus = Resource.Popup.Status.ConfirmMulti; // xóa nhiều
+      this.messageAlert = Resource.Popup.Title.DeleteMultiple;
       // show popup confirm
-      this.showPopupDel(true);
+      this.showPopup(true);
     },
     /**
      * Delete multi employees
@@ -373,11 +400,11 @@ export default {
       let _this = this;
       EmployeeService.deleteMulti(this.selectedEmployees).then(function () {
         // Hide popup confirm
-        _this.showPopupDel(false);
+        _this.showPopup(false);
+        _this.selectedEmployees = [];
         _this.getAllData();
       });
     },
-
     /**
      * reset form data Employee detail
      * Author: CTKimYen (9/12/2021)
@@ -450,9 +477,7 @@ export default {
           this.selectedEmployees.push(this.employees[i].EmployeeId);
         }
       }
-      console.log(this.selectedEmployees);
     },
-
     /**
      * Update selected list if change selected emoloyee
      * Author: CTKimYen (24/12/2021)
@@ -463,7 +488,6 @@ export default {
       } else {
         this.isCheckAll = false;
       }
-      console.log(this.selectedEmployees);
     },
     /**
      * When click button duplicate in menu context
@@ -485,16 +509,14 @@ export default {
       this.employee.BankBranch = employee.BankBranch;
       this.employee.DateOfBirth = this.formatDate(employee.DateOfBirth);
       this.employee.IdentityDate = this.formatDate(employee.IdentityDate);
-      this.formMode = 0;
+      this.formMode = Resource.Mode.Create;
       this.EmployeeId = null;
       this.showModal(true);
     },
   },
-
   created() {
     this.getAllData();
   },
-
   /**
    * Format data type DATETIME to DD/MM/YYYY
    * Format data type NUMBER to MONEY
@@ -524,6 +546,8 @@ export default {
     inputSearch: function () {
       this.getAllData();
     },
+
+
   },
 };
 </script>

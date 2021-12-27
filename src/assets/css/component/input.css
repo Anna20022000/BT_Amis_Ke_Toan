@@ -57,3 +57,8 @@
     top: 6px;
 }
 /* end input search */
+
+input[type="date"]{
+    font-family: 'NotoSans-Regular';
+    text-transform: uppercase;
+}

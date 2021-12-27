@@ -47,7 +47,7 @@
           <td v-if="!loading">{{ employee.BankAccount }}</td>
           <td v-if="!loading">{{ employee.BankName }}</td>
           <td v-if="!loading">
-            <b class="m-btn-edit" @click="btnUpdateOnClick(employee)">Sửa</b>
+            <b class="m-btn-edit" @click="btUpdateOnClick(employee)">Sửa</b>
             <div
               class="mi mi-14 mi-arrow-up-blue m-dropdown"
               :class="{
@@ -85,7 +85,64 @@
 </template>
 
 <script>
+import moment from "moment"; // library format datetime
+// import EmployeeService from "../../services/employeeService"; // Service of this page
+// import { eventBus } from "../../main";
+
 export default {
-    
-}
+  props: ["employees","isCheckAll", "EmployeeId", "showModal", "formMode", "selectedEmployees"],
+  data() {
+    return {
+      // placehoder when loading
+      loading: false,
+      cols: 0,
+      
+      // show btn delete
+      showBtnDel: false,
+    };
+  },
+  methods: {
+updateOnClick(model){
+    this.$emit("btnUpdateOnClick", model);
+},
+
+    /**
+     * When click button menu dropdown
+     * Author: CTKimYen (15/10/2021)
+     */
+    btnShowDelOnclick(id) {
+      this.EmployeeId = id;
+      this.showBtnDel = !this.showBtnDel;
+    },
+    /**
+     * Format input type date
+     * Author: CTKimYen (10/12/2021)
+     */
+    formatDate(dateTime) {
+      if (dateTime) {
+        var date = new Date(dateTime);
+        var day = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        return date.getFullYear() + "-" + month + "-" + day;
+      }
+    },
+  },
+  /**
+   * Format data type DATETIME to DD/MM/YYYY
+   * Format data type NUMBER to MONEY
+   * Author: CTKimYen (6/12/2021)
+   */
+  filters: {
+    // Format data type DATETIME to DD/MM/YYYY
+    formatDate: function (value) {
+      if (!value) return "";
+      return moment(String(value)).format("DD/MM/YYYY");
+    },
+    // Format data type NUMBER to MONEY
+    formatNumber: function (value) {
+      if (!value) return "";
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+  },
+};
 </script>

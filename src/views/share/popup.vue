@@ -5,6 +5,7 @@
                 <div class="m-flex-start">
                     <div class="mi mi-48 mi-warning"></div>
                     <div class="m-messenger-warning">Bạn có thực sự muốn xóa Nhân viên [{{ employeeCode }}] không?</div>
+                    <div class="m-messenger-warning">Bạn có thực sự muốn xóa những nhân viên đã chọn không?</div>
                 </div>
                 <div class="m-mess-line"></div>
             </div>
@@ -19,14 +20,14 @@
 
 <script>
 export default {
-    props: ["showPopup", "employeeCode"],
+    props: ["showPopup", "employeeCode", "isCheck"],
     methods: {
         /**
          * If click OK, call function deleteEmployee in father-component
          * Author: CTKimYen (14/12/2021)
          */
         confirmDel(){
-            this.$emit("deleteEmployee");
+            // this.$emit("deleteEmployee");
         },
 
         /**
@@ -34,7 +35,10 @@ export default {
          * Author: CTKimYen (14/12/2021)
          */
         closePopup(){
-            this.$emit("showPopupDel", false);
+            // this.$emit("showPopup", false);
+        },
+        confirmDelMulti(){
+            // this.$$emit("deleteMulti");
         }
     },
 }

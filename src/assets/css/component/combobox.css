@@ -1,6 +1,8 @@
 .v-select {
     position: relative;
     font-family: inherit;
+    border: 1px solid rgba(60, 60, 60, 0.26);
+    border-radius: 2px;
   }
   .v-select,
   .v-select * {
@@ -308,4 +310,22 @@
   .v-select.form-control.vs--single.vs--searchable{
       border: 1px solid #babec5 ;
       border-radius: 2px
+  }
+
+
+  /*  */
+  .vs__header{
+    height: 30px;
+    background-color: #f4f5f8;
+  }
+  
+  .vs__header .vs__option{
+    padding-left: 20px;
+  }
+  /* .vs__option{
+    height: 30px !important;
+    line-height: 30px !important;
+  } */
+  .vs__option:nth-child(1){
+    min-width: 100px;
   }

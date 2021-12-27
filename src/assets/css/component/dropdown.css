@@ -20,6 +20,7 @@
 }
 .m-dropdown-active {
   border: 1px solid #0075c0;
+  padding: 4px 9px;
 }
 
 .m-dropdown-active > div.m-dropdown-item {
@@ -62,7 +63,7 @@ div.m-dropdown-item > div:hover {
 .m-content-main .m-row .m-bar-table-left .m-dropdown:hover {
   background-color: #d2d3d6;
 }
-.m-dropdown-item{
+.m-bar-table-left .m-dropdown-item{
   top: 110% !important;
   left: 40% !important;
   z-index: 1111 !important;
