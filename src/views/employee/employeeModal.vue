@@ -6,14 +6,6 @@
       <nav class="m-modal-header">
         <div class="mo-header-left">
           <span class="m-modal-title">Thông tin nhân viên</span>
-          <!-- <div class="plr-6 m-checkbox-label">
-            <input type="checkbox" class="m-checkbox" />
-            <label>Là khách hàng</label>
-          </div>
-          <div class="plr-6 m-checkbox-label">
-            <input type="checkbox" class="m-checkbox" />
-            <label>Là nhà cung cấp</label>
-          </div> -->
         </div>
         <div class="mo-header-right">
           <div class="mi mi-24 mi-help"></div>
@@ -107,16 +99,7 @@
         <div class="m-row">
           <div class="pr-26 w-50 form-group">
             <label name="department" class="m-fc-name">Đơn vị</label>
-            <!-- <v-select
-              class="form-control"
-              v-model="employee.DepartmentId"
-              :options="departments"
-              :reduce="(DepartmentName) => DepartmentName.DepartmentId"
-              label="DepartmentName"
-              :class="{
-                'm-is-invalid': submitted && $v.employee.DepartmentId.$error,
-              }"
-            ></v-select> -->
+            <!-- COMBOBOX -->
             <v-select
               :options="departments"
               label="DepartmentName"
@@ -128,14 +111,14 @@
             >
               <template #list-header>
                 <div class="vs__header">
-                  <div class="m-flex-start">
+                  <div class="m-flex-col">
                     <div class="vs__option"><b>Mã đơn vị</b></div>
                     <div class="vs__option"><b>Tên đơn vị</b></div>
                   </div>
                 </div>
               </template>
               <template v-slot:option="option">
-                <div class="m-flex-start">
+                <div class="m-flex-col">
                   <div class="vs__option">{{ option.DepartmentCode }}</div>
                   <div class="vs__option">{{ option.DepartmentName }}</div>
                 </div>
@@ -150,6 +133,7 @@
                 >
               </template>
             </v-select>
+            <!-- END COMBOBOX -->
           </div>
           <div class="w-50 m-flex">
             <div class="w-60 pr-6">
@@ -212,7 +196,10 @@
                 type="text"
                 class="m-input form-control"
                 v-mask="'(###) ###-####'"
-                v-model="employee.TelephoneNumber"
+                v-model="employee.PhoneNumber"
+                :class="{
+                  'm-is-invalid': submitted && $v.employee.PhoneNumber.$error,
+                }"
               />
             </div>
             <div class="w-25 pr-6">
@@ -221,7 +208,11 @@
                 type="text"
                 class="m-input form-control"
                 v-mask="'(###) ###-####'"
-                v-model="employee.PhoneNumber"
+                v-model="employee.TelephoneNumber"
+                :class="{
+                  'm-is-invalid':
+                    submitted && $v.employee.TelephoneNumber.$error,
+                }"
               />
             </div>
             <div class="w-25 pr-6">
@@ -245,6 +236,9 @@
                 type="text"
                 class="m-input form-control"
                 v-model="employee.BankAccount"
+                :class="{
+                  'm-is-invalid': submitted && $v.employee.BankAccount.$error,
+                }"
               />
             </div>
             <div class="w-25 pr-6">
@@ -298,8 +292,7 @@
 <script>
 import EmployeeService from "../../services/employeeService";
 import DepartmentService from "../../services/departmentService";
-import { required, email } from "vuelidate/lib/validators";
-// import Alert from "../share/alert.vue";
+import { required, email, minLength } from "vuelidate/lib/validators";
 import Resource from "../../core/resources.js"; // my resource
 import { eventBus } from "../../main";
 
@@ -311,9 +304,8 @@ export default {
       departments: [],
       // check form submitted
       submitted: false,
-
-      // show alert error
-      isShowAlert: false,
+      // check form state is error or not
+      isFormError: false,
       // message error info
       messageAlert: "",
       // alert status danger
@@ -345,6 +337,13 @@ export default {
           return true;
         },
       },
+      PhoneNumber: {
+        minLength: minLength(12),
+      },
+      TelephoneNumber: {
+        minLength: minLength(12),
+      },
+      BankAccount: { minLength: minLength(10) },
     },
   },
   methods: {
@@ -358,8 +357,6 @@ export default {
       let _this = this;
       // validate input data and return if form is invalid
       if (_this.$v.$invalid) {
-        _this.alertStatus = Resource.Popup.Status.Error;
-
         // Check validate Employee Code
         if (_this.submitted && _this.$v.employee.EmployeeCode.$error) {
           _this.$emit(
@@ -392,7 +389,7 @@ export default {
             Resource.Popup.Status.Error
           );
         }
-        // Check validate Employee Email:
+        // Check validate Employee Date-Of-Birth:
         else if (_this.submitted && _this.$v.employee.DateOfBirth.$error) {
           _this.$emit(
             "showPopupFromModal",
@@ -400,7 +397,7 @@ export default {
             Resource.Popup.Status.Error
           );
         }
-        // Check validate Employee Email:
+        // Check validate Employee Identity_date:
         else if (_this.submitted && _this.$v.employee.IdentityDate.$error) {
           _this.$emit(
             "showPopupFromModal",
@@ -408,12 +405,35 @@ export default {
             Resource.Popup.Status.Error
           );
         }
+        // Check validate Employee PhoneNumber:
+        else if (_this.submitted && _this.$v.employee.PhoneNumber.$error) {
+          _this.$emit(
+            "showPopupFromModal",
+            Resource.Message.ValidateInvalid.PhoneNumberError,
+            Resource.Popup.Status.Error
+          );
+        }
+        // Check validate Employee TelephoneNumber:
+        else if (_this.submitted && _this.$v.employee.TelephoneNumber.$error) {
+          _this.$emit(
+            "showPopupFromModal",
+            Resource.Message.ValidateInvalid.TelephoneNumberError,
+            Resource.Popup.Status.Error
+          );
+        }
         // stop here if form is invalid
         return;
       }
+      // Check valid date-of-birth
+      if (_this.employee.DateOfBirth == "") {
+        _this.employee.DateOfBirth = null;
+      }
+      // Check valid indentity-date
+      if (_this.employee.IdentityDate == "") {
+        _this.employee.IdentityDate = null;
+      }
       // Check Mode is ADD or UPDATE
-      // If mode = 0 => add
-      if (this.mode == 0) {
+      if (this.mode == Resource.Mode.Create) {
         // add
         await this.createEmployee();
       } else {
@@ -437,31 +457,31 @@ export default {
      */
     async createEmployee() {
       let _this = this;
-      let dateBirth = _this.employee.DateOfBirth;
-      if (dateBirth == "") {
-        _this.employee.DateOfBirth = null;
-      } else
-        await EmployeeService.create(this.employee)
-          .then(function () {
-            _this.$emit("showModal", false);
-            _this.$emit("getAllData");
-          })
-          .catch(function (res) {
-            switch (res.response.status) {
-              case 400: {
-                let data = res.response.data;
-                if (data) {
-                  _this.alertStatus = Resource.Popup.Status.Error;
-                  _this.messageAlert = data.data[0];
-                  _this.showAlertError(true);
-                }
-                break;
+      await EmployeeService.create(this.employee)
+        .then(function () {
+          _this.$emit("showModal", false);
+          _this.$emit("getAllData");
+        })
+        .catch(function (res) {
+          switch (res.response.status) {
+            case 400: {
+              let data = res.response.data;
+              if (data) {
+                _this.messageAlert = data.data[0];
+                _this.isFormError = true;
+                _this.$emit(
+                  "showPopupFromModal",
+                  _this.messageAlert,
+                  Resource.Popup.Status.Error
+                );
               }
-              default:
-                alert(res);
-                break;
+              break;
             }
-          });
+            default:
+              alert(res);
+              break;
+          }
+        });
     },
     /**
      * Call api to update EMPLOYEE DATA
@@ -479,9 +499,13 @@ export default {
             case 400: {
               let data = res.response.data;
               if (data) {
-                _this.alertStatus = Resource.Popup.Status.Error;
                 _this.messageAlert = data.data[0];
-                _this.showAlertError(true);
+                _this.isFormError = true;
+                _this.$emit(
+                  "showPopupFromModal",
+                  _this.messageAlert,
+                  Resource.Popup.Status.Error
+                );
               }
               break;
             }
@@ -497,7 +521,6 @@ export default {
     btnCloseOnclick() {
       if (this.formChanged > 2) {
         // alert status question
-        this.alertStatus = Resource.Popup.Status.Question;
         this.messageAlert = Resource.Popup.Title.Question;
         this.$emit(
           "showPopupFromModal",
@@ -512,8 +535,9 @@ export default {
      * Author: KimYen (15/12/2021)
      */
     btnCancelOnclick() {
-      if (this.isShowAlert) {
+      if (this.isFormError) {
         this.submitted = false;
+        this.isFormError = false;
       } else {
         this.$emit("resetFormData");
         this.$emit("showModal", false);
@@ -534,18 +558,11 @@ export default {
           alert(e);
         });
     },
-    /**
-     * Show alert error by param
-     * Author: CTKimYen (15/12/2021)
-     */
-    showAlertError(isshow) {
-      this.isShowAlert = isshow;
-    },
   },
 
   created() {
     this.getAllDepartments();
-    //
+
     eventBus.$on("hideModal", () => {
       this.btnCancelOnclick();
     });
@@ -563,6 +580,7 @@ export default {
       },
       deep: true,
     },
+    // theo dõi sự thay đổi của biến isShow
     isShow() {
       setTimeout(() => {
         this.$refs.txtEmployeeCode.focus();

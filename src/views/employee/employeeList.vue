@@ -8,17 +8,14 @@
       </button>
     </div>
     <!-- end title page -->
-    <!-- Content main -->
+    <!-- CONTENT MAIN -->
     <div class="m-content-main">
       <div class="m-row">
-        <div
-          class="m-bar-table-left"
-          @click="isShowDelMulti()"
-        >
+        <div class="m-bar-table-left" @click="isShowDelMulti()">
           <div
             class="m-dropdown"
             :class="{
-              'm-dropdown-active':showBtnDelMulti,
+              'm-dropdown-active': showBtnDelMulti,
             }"
           >
             <b class="mr-4">Thực hiện hàng loạt</b
@@ -123,28 +120,24 @@
             </tr>
           </tbody>
         </table>
-        <div v-if="!employees || employees.length == 0 && !loading" style="padding: 2em 0">
-          <div style="display: flex; justify-content: center">
-            <img
-              style="width: 132px"
-              src="https://actappg2.misacdn.net/img/bg_report_nodata.76e50bd8.svg"
-              alt=""
-            />
-          </div>
-          <p style="margin-top: 1em; text-align: center">Không có dữ liệu</p>
-        </div>
+        <!-- DATA EMPTY -->
+        <base-data-empty v-if="!employees || (employees.length == 0 && !loading)" />
+        <!-- END DATA EMPTY -->
       </div>
-      <!-- paginate -->
+      <!-- PAGINATION BAR-->
       <div class="m-paginate" v-if="employees && employees.length > 0">
         <div class="m-paging-left">
           Tổng số: <b>{{ TotalRecord }}</b> bản ghi
         </div>
         <div class="m-paging-right">
-          <select name="" id="" class="m-dropdown" v-model="pageSize">
-            <option value="30">30 bản ghi/ trang</option>
-            <option value="50">50 bản ghi/ trang</option>
-            <option value="100">100 bản ghi/ trang</option>
-          </select>
+          <!-- dropdown -->
+          <base-dropdown
+            :pageSize="pageSize"
+            @loadData="getAllData"
+            @changePageSize="changePageSize"
+          />
+          <!-- end dropdown -->
+          <!-- pagination -->
           <div class="m-paging plr-6">
             <sliding-pagination
               :current="currentPage"
@@ -157,11 +150,12 @@
               @page-change="pageChangeHandler"
             ></sliding-pagination>
           </div>
+          <!-- pagination -->
         </div>
       </div>
-      <!-- end paginate -->
+      <!-- END PAGINATION BAR -->
     </div>
-    <!-- end content main -->
+    <!-- END CONTENT MAIN -->
 
     <!-- MODAL EMPLOYEE -->
     <employee-modal
@@ -175,8 +169,8 @@
       @resetFormData="resetFormData"
       @showPopupFromModal="showPopupFromModal"
     />
-
-    <alert
+    <!-- POPUP -->
+    <base-popup
       :showAlert="isShowPopup"
       :messageAlert="messageAlert"
       :status="popupStatus"
@@ -184,7 +178,7 @@
       @deleteMulti="deleteMultiRecords"
       @showPopup="showPopup"
     />
-    <!-- END POPUP DELETE -->
+    <!-- END POPUP -->
   </div>
 </template>
 
@@ -192,21 +186,24 @@
 import moment from "moment"; // library format datetime
 import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
-import Alert from "../share/alert.vue";
-import SlidingPagination from "vue-sliding-pagination";
-import Resource from "../../core/resources.js" // my resource
+import BasePopup from "../../components/base/basePopup.vue"; // sử dụng base Popup
+import BaseDropdown from "../../components/base/baseDropdown"; // sử dụng base Dropdown
+import BaseDataEmpty from "../../components/base/baseDataEmpty.vue"; // sử dụng base Dropdown
 
+import SlidingPagination from "vue-sliding-pagination";
+import Resource from "../../core/resources.js"; // my resource
 
 export default {
   components: {
     EmployeeModal,
-    Alert,
+    BasePopup,
+    BaseDropdown,
+    BaseDataEmpty,
     SlidingPagination,
   },
   data() {
     return {
-      // formMode = 0 - ADD
-      // formMode = 1 - EDIT
+      // trạng thái form modal (thêm/sửa)
       formMode: Resource.Mode.Create,
       // danh sách nhân viên
       employees: [],
@@ -245,7 +242,7 @@ export default {
       // tổng số trang
       totalPages: 0,
       // số bản ghi trên trang
-      pageSize: 30,
+      pageSize: 20,
       // tổng số bản ghi
       TotalRecord: 0,
       // input tìm kiếm theo mã hoặc tên
@@ -305,11 +302,10 @@ export default {
           _this.employees = response.data.Data;
           _this.totalPages = response.data.TotalPage;
           _this.TotalRecord = response.data.TotalRecord;
-          
-          setTimeout(()=>{
-            _this.cols = 0,
-            _this.loading = false;
-          } , 0);
+
+          setTimeout(() => {
+            (_this.cols = 0), (_this.loading = false);
+          }, 0);
         })
         .catch((e) => {
           alert(e);
@@ -335,7 +331,11 @@ export default {
     showPopup(isShow) {
       this.isShowPopup = isShow;
     },
-    showPopupFromModal(msg, status){
+    /**
+     * Show popup from request in modal
+     * Author: CTKimYen (26/12/2021)
+     */
+    showPopupFromModal(msg, status) {
       this.messageAlert = msg;
       this.popupStatus = status;
       this.isShowPopup = true;
@@ -368,16 +368,15 @@ export default {
           alert(e);
         });
     },
-    
+
     /**
      * When click button Thực hiện hàng loạt
      * Author: CTKimYen (26/12/2021)
      */
-    isShowDelMulti(){
-      if(this.showBtnDelMulti == true){
+    isShowDelMulti() {
+      if (this.showBtnDelMulti == true) {
         this.showBtnDelMulti = false;
-      }
-      else if(this.selectedEmployees.length > 0){
+      } else if (this.selectedEmployees.length > 0) {
         this.showBtnDelMulti = true;
       }
     },
@@ -456,6 +455,13 @@ export default {
     pageChangeHandler(selectedPage) {
       this.currentPage = selectedPage;
       this.getAllData();
+    },
+    /**
+     * When to change the pageSize from baseDropdown
+     * Author: CTKimYen (27/12/2021)
+     */
+    changePageSize(page) {
+      this.pageSize = page;
     },
     /**
      * When click button Export File Excel
@@ -538,16 +544,16 @@ export default {
    * Author: CTKimYen (15/12/2021)
    */
   watch: {
-    // follow input items-per-page change
-    pageSize: function () {
-      this.getAllData();
-    },
     // follow input-search change
     inputSearch: function () {
-      this.getAllData();
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getAllData();
+      }, 1000);
     },
-
-
   },
 };
 </script>

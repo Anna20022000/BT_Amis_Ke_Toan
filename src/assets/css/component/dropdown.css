@@ -69,3 +69,91 @@ div.m-dropdown-item > div:hover {
   z-index: 1111 !important;
   cursor: pointer;
 }
+
+/* PAGINATE DROPDOWN */
+
+.m-paging-right .m-dropdown-list {
+  background-color: #fff !important;
+  display: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 18px;
+  left: -75px;
+  z-index: 3;
+  min-width: 100px;
+  border: 1px solid #b8bcc3;
+}
+
+.m-paging-right .m-dropdown-page {
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  cursor: pointer;
+}
+
+.m-paging-right .m-dropdown-page:hover {
+  background: rgb(218, 217, 217);
+  color: #08bf1e;
+}
+
+.m-paging-right .m-dropdown-active {
+  border: 1px solid #0075c0;
+  padding: 1px 5px;
+}
+
+.m-paging-right .m-dropdown-active .m-dropdown-list {
+  display: block;
+}
+
+.m-paging-right .m-dropdown-menu {
+  background: #fff;
+  padding: 2px 1px;
+  border-radius: 2px;
+  border: 1px solid #babec5;
+  position: relative;
+}
+.m-paging-right .m-page-size {
+  border: 1px solid #babec5;
+  position: relative;
+}
+.m-paging-right .m-page-size .page-size-text {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 10px;
+  min-width: 160px;
+}
+.m-paging-right .m-page-size .m-dropdown {
+  padding: 0;
+}
+.m-paging-right .m-page-size .m-icon-arrow {
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.m-paging-right .m-page-size .m-icon-arrow:hover {
+  background: #e0e0e0;
+}
+.m-paging-right .m-page-size .m-dropdown.m-dropdown-active {
+  border: none;
+  background: #e0e0e0;
+}
+
+.m-page-size .m-dropdown .m-dropdown-list{
+  top: unset;
+  bottom: 105%;
+  left: -161px;
+  width: 192px;
+  z-index: 4;
+}
+.m-page-size .m-dropdown .m-dropdown-list .m-dropdown-page{
+  height: 32px !important;
+  line-height: 32px;
+  padding: 0 14px 0 10px;
+}
+.m-page-size .m-dropdown-page-active, .m-dropdown-page.m-dropdown-page-active:hover{
+  color: #fff;
+  background-color: #2ca01c;
+}

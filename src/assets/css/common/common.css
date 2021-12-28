@@ -7,6 +7,11 @@
     justify-content: center;
     align-items: center;
 }
+.m-flex-col{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
 .m-flex-start{
     display: flex;
     justify-content: start;

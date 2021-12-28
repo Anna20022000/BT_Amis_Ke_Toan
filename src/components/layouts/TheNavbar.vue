@@ -2,7 +2,7 @@
     <nav class="m-navbar">
         <div class="m-nav-top">
             <a href="#" class="m-toggle"></a>
-            <router-link to="/employee" class="m-logo"><img src="../assets/img/Logo_Module_TiengViet_White.66947422.svg" alt=""></router-link>
+            <router-link to="/employee" class="m-logo"><img src="../../assets/img/Logo_Module_TiengViet_White.66947422.svg" alt=""></router-link>
         </div>
         <div class="m-menu">
             <ul>
@@ -123,5 +123,5 @@ export default {
 </script>
 
 <style lang="css" scoped>
-    @import url('../assets/css/common/navbar.css');
+    @import url('../../assets/css/common/navbar.css');
 </style>

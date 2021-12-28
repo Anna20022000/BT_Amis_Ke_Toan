@@ -65,7 +65,7 @@ export default {
             this.$emit("showPopup", false)
         },
         /**
-         * when click button NO
+         * when click button NO in popup Question
          * Author: CTKimYen (16/12/2021)
          */
         btnNoOnclick(){

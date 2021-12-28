@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import TheNavbar from "./components/TheNavbar.vue";
-import TheHeader from "./components/TheHeader.vue";
-import TheContent from "./components/TheContent.vue";
+import TheNavbar from "./components/layouts/TheNavbar.vue";
+import TheHeader from "./components/layouts/TheHeader.vue";
+import TheContent from "./components/layouts/TheContent.vue";
 
 export default {
   name: "App",
