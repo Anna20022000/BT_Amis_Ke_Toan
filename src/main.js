@@ -10,6 +10,10 @@ import Vuelidate from 'vuelidate'
 import VueContentPlaceholders from 'vue-content-placeholders'
 // vue mask to format phone number
 import VueMask from 'v-mask'
+// tooltip
+import VTooltip from 'v-tooltip'
+
+Vue.use(VTooltip)
 
 export const eventBus = new Vue()
 

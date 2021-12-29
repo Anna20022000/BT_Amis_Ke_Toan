@@ -15,7 +15,6 @@
       <!-- end header modal -->
       <!-- content modal -->
       <article class="m-modal-content">
-        <!-- <form @submit.prevent="handleSubmit"> -->
         <div class="m-row">
           <div class="w-50 pr-26 m-flex">
             <div class="w-40 pr-6 form-group">
@@ -26,6 +25,7 @@
                 type="text"
                 class="m-input form-control"
                 ref="txtEmployeeCode"
+                v-tooltip.bottom="{ content: submitted && $v.employee.EmployeeCode.$error ? 'Mã không được để trống.' : null }"
                 v-model="employee.EmployeeCode"
                 :class="{
                   'm-is-invalid': submitted && $v.employee.EmployeeCode.$error,
@@ -39,6 +39,7 @@
               <input
                 type="text"
                 class="m-input form-control"
+                v-tooltip.bottom="{ content: submitted && $v.employee.EmployeeName.$error ? 'Tên không được để trống.' : null }"
                 v-model="employee.EmployeeName"
                 :class="{
                   'm-is-invalid': submitted && $v.employee.EmployeeName.$error,
@@ -105,6 +106,7 @@
               label="DepartmentName"
               :reduce="(ontion) => ontion.DepartmentId"
               v-model="employee.DepartmentId"
+             v-tooltip.bottom="{content: submitted && $v.employee.DepartmentId.$error ? 'Đơn vị không được để trống.' : null}"
               :class="{
                 'm-is-invalid': submitted && $v.employee.DepartmentId.$error,
               }"
@@ -140,6 +142,7 @@
               <label class="m-fc-name">Số CMND</label>
               <input
                 type="text"
+                v-mask="'############'"
                 class="m-input form-control"
                 v-model="employee.IdentityNumber"
               />
@@ -235,6 +238,7 @@
               <input
                 type="text"
                 class="m-input form-control"
+                v-mask="'###############'"
                 v-model="employee.BankAccount"
                 :class="{
                   'm-is-invalid': submitted && $v.employee.BankAccount.$error,
@@ -298,7 +302,6 @@ import { eventBus } from "../../main";
 
 export default {
   props: ["isShow", "mode", "employee", "employeeId"],
-  // components: { Alert },
   data() {
     return {
       departments: [],
@@ -359,17 +362,20 @@ export default {
       if (_this.$v.$invalid) {
         // Check validate Employee Code
         if (_this.submitted && _this.$v.employee.EmployeeCode.$error) {
+          _this.messageAlert =
+            Resource.Message.ValidateInvalid.EmployeeCodeIsEmpty;
           _this.$emit(
             "showPopupFromModal",
-            Resource.Message.ValidateInvalid.EmployeeCodeIsEmpty,
+            _this.messageAlert,
             Resource.Popup.Status.Error
           );
         }
         // Check validate Employee Name
         else if (_this.submitted && _this.$v.employee.EmployeeName.$error) {
+          _this.messageAlert = Resource.Message.ValidateInvalid.FullNameIsEmpty;
           _this.$emit(
             "showPopupFromModal",
-            Resource.Message.ValidateInvalid.FullNameIsEmpty,
+            _this.messageAlert,
             Resource.Popup.Status.Error
           );
         }
@@ -592,4 +598,5 @@ export default {
 
 <style scoped>
 @import url("../../assets/css/component/combobox.css");
+@import url("../../assets/css/component/tooltip.css");
 </style>
