@@ -39,10 +39,18 @@
           </div>
           <!-- end input search -->
           <!-- button refresh -->
-          <div class="mi mi-24 mi-refresh" @click="getAllData()"></div>
+          <div
+            class="mi mi-24 mi-refresh"
+            @click="getAllData()"
+            v-tooltip.top="'Lấy lại dữ liệu'"
+          ></div>
           <!-- end button refresh -->
           <!-- button export file excel -->
-          <div class="mi mi-24 mi-excel" @click="exportFile()"></div>
+          <div
+            class="mi mi-24 mi-excel"
+            @click="exportFile()"
+            v-tooltip.top="'Xuất ra Excel'"
+          ></div>
           <!-- end button export file  -->
         </div>
       </div>
@@ -121,7 +129,9 @@
           </tbody>
         </table>
         <!-- DATA EMPTY -->
-        <base-data-empty v-if="!employees || (employees.length == 0 && !loading)" />
+        <base-data-empty
+          v-if="!employees || (employees.length == 0 && !loading)"
+        />
         <!-- END DATA EMPTY -->
       </div>
       <!-- PAGINATION BAR-->
@@ -179,6 +189,12 @@
       @showPopup="showPopup"
     />
     <!-- END POPUP -->
+    <!-- TOAST MESS -->
+    <!-- <base-toast
+      :message="messToast"
+      :status="statusToast"
+      :isShow="showBaseToast"
+    /> -->
   </div>
 </template>
 
@@ -188,7 +204,8 @@ import EmployeeModal from "./employeeModal.vue"; // Modal ADD or UPDATE employee
 import EmployeeService from "../../services/employeeService"; // Service of this page
 import BasePopup from "../../components/base/basePopup.vue"; // sử dụng base Popup
 import BaseDropdown from "../../components/base/baseDropdown"; // sử dụng base Dropdown
-import BaseDataEmpty from "../../components/base/baseDataEmpty.vue"; // sử dụng base Dropdown
+import BaseDataEmpty from "../../components/base/baseDataEmpty.vue"; // sử dụng base DataEmpty
+// import BaseToast from "../../components/base/baseToast.vue"; // sử dụng base Toast mess
 
 import SlidingPagination from "vue-sliding-pagination";
 import Resource from "../../core/resources.js"; // my resource
@@ -199,17 +216,26 @@ export default {
     BasePopup,
     BaseDropdown,
     BaseDataEmpty,
+    // BaseToast,
     SlidingPagination,
   },
   data() {
     return {
-      // trạng thái form modal (thêm/sửa)
+      /**
+       * trạng thái form modal (thêm/sửa)
+       */
       formMode: Resource.Mode.Create,
-      // danh sách nhân viên
+      /**
+       * danh sách nhân viên
+       */
       employees: [],
-      // id nhân viên
+      /**
+       * khóa chính bảng nhân viên
+       */
       EmployeeId: "",
-      // 1 đối tượng nhân viên
+      /**
+       * 1 đối tượng nhân viên
+       */
       employee: {
         EmployeeCode: "",
         EmployeeName: null,
@@ -229,31 +255,71 @@ export default {
         BankName: "",
         BankBranch: "",
       },
-      // show modal employee detail
+      /**
+       * chế độ ẩn hiện form modal nhập liệu
+       * (true-hiện; false-ẩn)
+       */
       isShowModal: false,
-      // show btn delete
+      /**
+       * chế độ ẩn/hiện nút xóa trong menu context
+       * (true-hiện; false-ẩn)
+       */
       showBtnDel: false,
-      // show popup confirm delete
+      /**
+       * chế độ ẩn/hiện popup
+       * (true-hiện; false-ẩn)
+       */
       isShowPopup: false,
+      /**
+       * câu cảnh báo lỗi
+       */
       messageAlert: "",
-      popupStatus: 2,
-      // trang hiện tại
+      /**
+       * Trạng thái của popup hiển thị
+       */
+      popupStatus: Resource.Popup.Status.ConfirmSingle,
+      /**
+       * trang hiện tại
+       */
       currentPage: 1,
-      // tổng số trang
+      /**
+       * tổng số trang
+       */
       totalPages: 0,
-      // số bản ghi trên trang
+      /**
+       * số bản ghi trên trang
+       */
       pageSize: 20,
-      // tổng số bản ghi
+      /**
+       * tổng số bản ghi
+       */
       TotalRecord: 0,
-      // input tìm kiếm theo mã hoặc tên
+      /**
+       * input tìm kiếm theo mã hoặc tên
+       */
       inputSearch: "",
-      // Check all
+      /**
+       * kiểm tra nút chọn-tất-cả có đang được chọn hay không
+       * (true-có; false-không)
+       */
       isCheckAll: false,
+      /**
+       * Mảng chứa các khóa chính của các nhân viên được chọn
+       */
       selectedEmployees: [],
-      // btn del multi
+      /**
+       * Chế độ ẩn/hiện nút xóa nhiều
+       * (true-hiện; false-ẩn)
+       */
       showBtnDelMulti: false,
-      // placehoder when loading
+      /**
+       * chế độ ẩn/hiện placehoder khi loading dữ liệu
+       * (true-hiện; false-ẩn)
+       */
       loading: false,
+      /**
+       * Số cột của bảng
+       */
       cols: 0,
     };
   },
@@ -272,15 +338,23 @@ export default {
      * Author:CTKimYen (9/12/2021)
      */
     async btnUpdateOnClick(model) {
-      let _this = this;
-      await EmployeeService.getSingle(model.EmployeeId).then(function (res) {
-        let e = res.data;
-        (_this.EmployeeId = model.EmployeeId), (_this.employee = e);
-        _this.employee.DateOfBirth = _this.formatDate(e.DateOfBirth);
-        _this.employee.IdentityDate = _this.formatDate(e.IdentityDate);
-      });
-      this.formMode = Resource.Mode.Update;
-      this.showModal(true);
+      let me = this;
+      await EmployeeService.getSingle(model.EmployeeId)
+        .then(function (res) {
+          let e = res.data;
+          (me.EmployeeId = model.EmployeeId), (me.employee = e);
+          me.employee.DateOfBirth = me.formatDate(e.DateOfBirth);
+          me.employee.IdentityDate = me.formatDate(e.IdentityDate);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      try {
+        this.formMode = Resource.Mode.Update;
+        this.showModal(true);
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * Show modal employee detail
@@ -296,19 +370,18 @@ export default {
     getAllData() {
       this.loading = true;
       this.cols = 11;
-      let _this = this;
+      let me = this;
       EmployeeService.filter(this.pageSize, this.currentPage, this.inputSearch)
         .then((response) => {
-          _this.employees = response.data.Data;
-          _this.totalPages = response.data.TotalPage;
-          _this.TotalRecord = response.data.TotalRecord;
-
+          me.employees = response.data.Data;
+          me.totalPages = response.data.TotalPage;
+          me.TotalRecord = response.data.TotalRecord;
           setTimeout(() => {
-            (_this.cols = 0), (_this.loading = false);
+            (me.cols = 0), (me.loading = false);
           }, 0);
         })
         .catch((e) => {
-          alert(e);
+          console.log(e);
         });
     },
     /**
@@ -321,7 +394,7 @@ export default {
           this.employee.EmployeeCode = response.data;
         })
         .catch((e) => {
-          alert(e);
+          console.log(e);
         });
     },
     /**
@@ -345,24 +418,29 @@ export default {
      * Author: CTKimYen (14/12/2021)
      */
     btnDeleteOnClick(model) {
-      this.employee = model;
-      this.popupStatus = 2; // Xóa 1
-      this.messageAlert = Resource.Popup.TitleWithParam(model.EmployeeCode);
-      // show popup confirm
-      this.showPopup(true);
+      try {
+        this.employee = model;
+        this.popupStatus = Resource.Popup.Status.ConfirmSingle; // Xóa 1
+        this.messageAlert = Resource.Popup.TitleWithParam(model.EmployeeCode);
+        // show popup confirm
+        this.showPopup(true);
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * Delete an Employee in database depend primary key
      * Author: CTKimYen (9/12/2021)
      */
     deleteEmployee() {
-      let _this = this;
+      let me = this;
       // call api to delete an employee
       EmployeeService.delete(this.employee.EmployeeId)
         .then(function () {
           // Hide popup confirm
-          _this.showPopup(false);
-          _this.getAllData();
+          me.showPopup(false);
+          me.$toast.success(Resource.Message.Toast.Delete, {timeout:2000});
+          me.getAllData();
         })
         .catch(function (e) {
           alert(e);
@@ -386,23 +464,32 @@ export default {
      * Author: CTKimYen (25/12/2021)
      */
     btnDelMultiOnclick() {
-      this.popupStatus = Resource.Popup.Status.ConfirmMulti; // xóa nhiều
-      this.messageAlert = Resource.Popup.Title.DeleteMultiple;
-      // show popup confirm
-      this.showPopup(true);
+      try {
+        this.popupStatus = Resource.Popup.Status.ConfirmMulti; // xóa nhiều
+        this.messageAlert = Resource.Popup.Title.DeleteMultiple;
+        // show popup confirm
+        this.showPopup(true);
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * Delete multi employees
      * Author: CTKimYen (25/12/2021)
      */
     deleteMultiRecords() {
-      let _this = this;
-      EmployeeService.deleteMulti(this.selectedEmployees).then(function () {
-        // Hide popup confirm
-        _this.showPopup(false);
-        _this.selectedEmployees = [];
-        _this.getAllData();
-      });
+      let me = this;
+      EmployeeService.deleteMulti(this.selectedEmployees)
+        .then(function () {
+          // Hide popup confirm
+          me.showPopup(false);
+          me.selectedEmployees = [];
+          me.$toast.success(Resource.Message.Toast.Delete, {timeout:2000});
+          me.getAllData();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
     /**
      * reset form data Employee detail
@@ -500,24 +587,28 @@ export default {
      * Author: CTKimYen (26/12/2021)
      */
     async btnDuplicateOnclick(employee) {
-      await this.getNewEmployeeCode();
-      this.employee.EmployeeName = employee.EmployeeName;
-      this.employee.PositionName = employee.PositionName;
-      this.employee.Gender = employee.Gender;
-      this.employee.DepartmentId = employee.DepartmentId;
-      this.employee.IdentityNumber = employee.IdentityNumber;
-      this.employee.Address = employee.Address;
-      this.employee.IdentityPlace = employee.IdentityPlace;
-      this.employee.PhoneNumber = employee.PhoneNumber;
-      this.employee.Email = employee.Email;
-      this.employee.BankAccount = employee.BankAccount;
-      this.employee.BankName = employee.BankName;
-      this.employee.BankBranch = employee.BankBranch;
-      this.employee.DateOfBirth = this.formatDate(employee.DateOfBirth);
-      this.employee.IdentityDate = this.formatDate(employee.IdentityDate);
-      this.formMode = Resource.Mode.Create;
-      this.EmployeeId = null;
-      this.showModal(true);
+      try {
+        await this.getNewEmployeeCode();
+        this.employee.EmployeeName = employee.EmployeeName;
+        this.employee.PositionName = employee.PositionName;
+        this.employee.Gender = employee.Gender;
+        this.employee.DepartmentId = employee.DepartmentId;
+        this.employee.IdentityNumber = employee.IdentityNumber;
+        this.employee.Address = employee.Address;
+        this.employee.IdentityPlace = employee.IdentityPlace;
+        this.employee.PhoneNumber = employee.PhoneNumber;
+        this.employee.Email = employee.Email;
+        this.employee.BankAccount = employee.BankAccount;
+        this.employee.BankName = employee.BankName;
+        this.employee.BankBranch = employee.BankBranch;
+        this.employee.DateOfBirth = this.formatDate(employee.DateOfBirth);
+        this.employee.IdentityDate = this.formatDate(employee.IdentityDate);
+        this.formMode = Resource.Mode.Create;
+        this.EmployeeId = null;
+        this.showModal(true);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   created() {
@@ -557,3 +648,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@import url("../../assets/css/component/tooltip.css");
+</style>

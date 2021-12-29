@@ -4,7 +4,9 @@ let Resource = {
      * Author: CTKimYen (27/12/2021)
      */
     Mode : {
+        // Thêm mới
         Create: 0,
+        // Cập nhật
         Update: 1
     },
 
@@ -21,10 +23,15 @@ let Resource = {
             EmailError: "Email không đúng định dạng.",
             IndentityDateError: "Ngày cấp CMND không được lớn hơn ngày hiện tại.",
             IdentityNumberError: "Số CMND/thẻ căn cước không đúng định dạng.",
-            PhoneNumberError: "Số điện thoại di động không đúng định dạng.",
-            TelephoneNumberError: "Số điện thoại cố định không đúng định dạng.",
+
         },
-        Warning:"Có lỗi xảy ra. Vui lòng liên hệ MISA để được trợ giúp!"
+        Warning:"Có lỗi xảy ra. Vui lòng liên hệ MISA để được trợ giúp!",
+        Toast:{
+            Delete: "Xóa thành công.",
+            Created: "Thêm mới thành công.",
+            Updated: "Cập nhật thành công.",
+            Error: "Có lỗi xảy ra."
+        }
     },
 
     /**

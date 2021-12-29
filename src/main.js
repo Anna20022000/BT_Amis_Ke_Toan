@@ -13,14 +13,20 @@ import VueMask from 'v-mask'
 // tooltip
 import VTooltip from 'v-tooltip'
 
-Vue.use(VTooltip)
+import Toast from "vue-toastification"
+import "vue-toastification/dist/index.css"
+const options = {
+  position: "top-left"
+}
+Vue.use(Toast, options)
 
 export const eventBus = new Vue()
 
 Vue.component('v-select', vSelect)
 Vue.use(Vuelidate)
 Vue.use(VueContentPlaceholders)
-Vue.use(VueMask);
+Vue.use(VueMask)
+Vue.use(VTooltip)
 
 Vue.config.productionTip = false
 new Vue({

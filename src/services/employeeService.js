@@ -81,7 +81,6 @@ class EmployeeService {
    * Author: CTKimYen (26/12/2021)
    */
   exportFile(){
-    // return http.get('/api/v1/Employees/export');
     window.open("http://localhost:18204/api/v1/Employees/export", "_blank");
   }
 }
